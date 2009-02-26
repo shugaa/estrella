@@ -1,0 +1,499 @@
+/*
+* Copyright (c) 2009, Björn Rehm (bjoern@shugaa.de)
+* All rights reserved.
+* 
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+* 
+*  * Redistributions of source code must retain the above copyright notice, this
+*    list of conditions and the following disclaimer.
+*  * Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*  * Neither the name of the author nor the names of its contributors may be
+*    used to endorse or promote products derived from this software without
+*    specific prior written permission.
+* 
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#include "estrella.h"
+#include "estrella_private.h"
+#include "estrella_usb.h"
+
+#include <time.h>
+#include <string.h>
+
+/* ######################################################################### */
+/*                            TODO / Notes                                   */
+/* ######################################################################### */
+
+/* ######################################################################### */
+/*                            Types & Defines                                */
+/* ######################################################################### */
+
+struct usb_ident {
+    int id_vendor;
+    int id_product;
+};
+
+/* ######################################################################### */
+/*                           Private interface (Module)                      */
+/* ######################################################################### */
+
+int prv_usb_preup(void);
+int prv_usb_upload_firmware(struct usb_device *dev);
+int prv_usb_find_devices(dll_list_t *devices);
+int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle);
+
+/* ######################################################################### */
+/*                           Implementation                                  */
+/* ######################################################################### */
+
+/* These are the uninitialized usb devices on the bus. The problem I see here is
+ * that this chip eventually sits in a number of different devices and we're
+ * putting bad firmware on it. */
+static struct usb_ident usb_devices_preup[] = {
+    {0x04b4,0x8613},    
+};
+
+/* This is how they look after firmware upload and reenumeration */
+static struct usb_ident usb_devices[] = {
+    {0x0bd7,0xa012},
+};
+
+/* To upload the firmware to the usb devices we pretty much just roll back the
+ * sniffed transactions from the windows driver. These are the necessary
+ * requests. */
+extern estrella_usb_request_t usb_preup_req[];
+extern size_t usb_preup_req_size;
+
+int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle)
+{
+    struct usb_bus *usb_bus;
+    struct usb_device *dev;
+    struct usb_dev_handle *usb_handle = NULL;
+
+    /* update bus and device information */
+    usb_find_busses();
+    usb_find_devices();
+
+    /* Find the requested bus */
+    for (usb_bus=usb_busses;usb_bus;usb_bus=usb_bus->next) {
+        if (strcmp(usb_bus->dirname, device->spec.usb.bus) == 0)
+            break;
+    }
+
+    if (usb_bus == NULL)
+        return ESTRINV;
+
+    /* Find the requested device */
+    for (dev=usb_bus->devices;dev;dev=dev->next) {
+        if (dev->devnum == device->spec.usb.devnum)
+            break;
+    }
+
+    if (dev == NULL)
+        return ESTRINV;
+
+    /* Open the device */
+    usb_handle = usb_open(dev);
+    if (!usb_handle)
+        return ESTRERR;
+
+    /* Return the handle */
+    *handle = usb_handle;
+
+    return ESTROK;
+}
+
+int prv_usb_preup(void)
+{
+    struct usb_bus *usb_bus;
+    struct usb_device *dev;
+    int i;
+
+    /* Update bus and device information */
+    usb_find_busses();
+    usb_find_devices();
+
+    /* Look at every device */
+    for (usb_bus=usb_busses;usb_bus;usb_bus=usb_bus->next) {
+        for (dev=usb_bus->devices;dev;dev=dev->next) {
+
+            /* Check if the device is one of those that need firmware loaded */
+            for (i=0;i<(sizeof(usb_devices_preup)/sizeof(struct usb_ident));i++) {
+
+                if ((dev->descriptor.idVendor == usb_devices_preup[i].id_vendor) &&
+                    (dev->descriptor.idProduct == usb_devices_preup[i].id_product)) {
+
+                    /* Load the firmware. We don't really care if it fails or
+                     * succeeds at this point, we'll see later. */
+                    prv_usb_upload_firmware(dev);
+                }
+            }
+        }
+    }
+
+    return ESTROK;
+}
+
+int prv_usb_upload_firmware(struct usb_device *dev)
+{
+    struct usb_dev_handle *usb_handle = NULL;
+    int rc;
+    int i;
+
+    if (!dev)
+        return ESTRINV;
+
+    /* Open the device */
+    usb_handle = usb_open(dev);
+    if (usb_handle == NULL)
+        return ESTRERR;
+
+    /* Replay the captured USB traffic from the windows driver */
+    for (i=0;i<(usb_preup_req_size/sizeof(estrella_usb_request_t));i++) {
+        rc = usb_control_msg(
+                usb_handle,
+                usb_preup_req[i].requesttype | USB_TYPE_VENDOR, 
+                usb_preup_req[i].request, 
+                usb_preup_req[i].value, 
+                usb_preup_req[i].index, 
+                (char*)usb_preup_req[i].data, 
+                usb_preup_req[i].size, 
+                5000);
+
+        if (rc < 0) {
+            usb_close(usb_handle);
+            return ESTRERR;
+        }
+    }    
+
+    /* Close the device */
+    usb_close(usb_handle);
+    return ESTROK;
+}
+
+int prv_usb_find_devices(dll_list_t *devices)
+{
+    struct usb_bus *usb_bus = NULL;
+    struct usb_device *dev = NULL;
+    int rc, i;
+
+    /* update device and bus information */
+    usb_find_busses();
+    usb_find_devices();
+
+    /* Have a look at each device */
+    for (usb_bus=usb_busses;usb_bus;usb_bus=usb_bus->next) {
+        for (dev=usb_bus->devices;dev;dev=dev->next) {
+
+            /* Check if the device is one of ours */
+            for (i=0;i<(sizeof(usb_devices)/sizeof(struct usb_ident));i++) {
+
+                if ((dev->descriptor.idVendor == usb_devices[i].id_vendor) &&
+                    (dev->descriptor.idProduct == usb_devices[i].id_product)) {
+
+                    void *tmpdev = NULL;
+                    estrella_dev_t *newdev = NULL;
+
+                    /* Create a new list entry for this device */
+                    rc = dll_append(devices, &tmpdev, sizeof(estrella_dev_t));
+                    if (rc != EDLLOK)
+                        return ESTRNOMEM;
+        
+                    newdev = (estrella_dev_t*)tmpdev;
+
+                    /* And fill in the info */
+                    newdev->devicetype = ESTRELLA_DEV_USB;
+                    newdev->spec.usb.devnum = dev->devnum;
+                    strncpy(newdev->spec.usb.bus, usb_bus->dirname, ESTRELLA_PATH_MAX);
+                }
+            }
+        }
+    }
+
+    return ESTROK;
+}
+
+int estrella_usb_find_devices(dll_list_t *devices)
+{
+    int rc;
+
+    /* Call usb_init, we don't know if the library has already been initialized */
+    usb_init();
+  
+    /* Iterate all the busses and devices and in a first run try to find
+     * uninitialized USB devices. If we find any we try to provide them with the
+     * necessary firmware.*/
+    rc = prv_usb_preup();
+    if (rc != ESTROK)
+        return ESTRERR;
+
+    /* We need to wait a little for all the devices to reenumerate and show up
+     * on the bus. */
+    sleep(2);
+
+    /* Correctly initialized devices now show up on the bus with a different
+     * vendor/product ID. We're now going to search for those and return them */
+    rc = prv_usb_find_devices(devices);
+    if (rc != ESTROK)
+        return ESTRERR;
+
+    return 0;
+}
+
+int estrella_usb_init(estrella_session_t *session, estrella_dev_t *device)
+{
+    int rc;
+    struct usb_dev_handle *handle;
+
+    /* Data for the initializing control message */
+    unsigned char estrella_init_req_data[] = {0x00,0x12,0x10,0x1f,0xe0,0x40}; 
+    estrella_usb_request_t usb_init_req = {
+        0x00,
+        0xb4,
+        0x0000,
+        0x0000,
+        sizeof(estrella_init_req_data),
+        estrella_init_req_data,
+    };
+
+    /* First of all get the device handle */
+    rc = prv_usb_get_handle(device, &handle);
+    if (rc != ESTROK)
+        return ESTRINV;
+
+    /* The sniffed USB traffic from the windows driver shows that the host gets
+     * the device and config descriptors before it selects a configuration and
+     * claims an interface. Since there's obviously only one configuration and
+     * one interface available to choose from we skip this step here. At least
+     * that's the case for my device. 
+     * TODO: This is probably necessary to handle other devices. */
+
+    /* Select configuration 0x01 */
+    rc = usb_set_configuration(handle, 0x01);
+    if (rc < ESTROK) {
+        return ESTRERR;
+    }
+
+    /* Claim interface 0x00 */
+    rc = usb_claim_interface(handle, 0x00);
+    if (rc < ESTROK) {
+        return ESTRERR;
+    }
+
+    /* What follows now is another control transfer which presumably performs
+     * initial device setup, obviously. */
+    rc = usb_control_msg(
+            handle,
+            usb_init_req.requesttype | USB_TYPE_VENDOR, 
+            usb_init_req.request, 
+            usb_init_req.value, 
+            usb_init_req.index, 
+            (char*)usb_init_req.data, 
+            usb_init_req.size, 
+            5000);
+    if (rc < 0) {
+        return ESTRERR;
+    }
+
+    /* Store the handle inside this session */
+    session->spec.usb_dev_handle = handle;
+
+    return ESTROK;
+}
+
+int estrella_usb_rate(estrella_session_t *session, int rate, int xtrate)
+{
+    int rc;
+
+    /* These are the control request and data which are being used to set the
+     * integration time. From what I can see from the sniffed windows driver log
+     * data[0] and data[1] hold the integration time in milliseconds. If this 
+     * value is >= 5 then data[3] is decremented by 1 to 0x1f. Also we obviously 
+     * can't supply values <= 1. So, 2 ms integration time is the minimum. */
+    unsigned char estrella_rate_req_data[] = {0x00,0x00,0x04,0x20,0xe0,0x40}; 
+    estrella_usb_request_t usb_rate_req = {
+        0x00,
+        0xb4,
+        0x0000,
+        0x0000,
+        sizeof(estrella_rate_req_data),
+        estrella_rate_req_data,
+    };
+
+    if (session->spec.usb_dev_handle == NULL)
+        return ESTRINV;
+
+    /* For whatever reason we have to subtract 1 from estrella_init_req_data[3]
+     * in case we want to use integration times >= 5 ms. */
+    estrella_rate_req_data[1] = (unsigned char)(rate & 0xFF);
+    estrella_rate_req_data[0] = (unsigned char)((rate >> 8) & 0xFF);
+
+    if (rate >= 5)
+        estrella_rate_req_data[3] -= 1;
+
+    /* Adjust x timing resolution. It's either 0x04, 0x08 or 0x10 in data[2].
+     * This is pretty much all I could figure out from the sniffed logs. There
+     * must be more to it though, since the rate seems to be adjusted, too when
+     * you select xtrate 1 or 2. I just can't seem to find out what's going on
+     * there. */
+    if (xtrate == 1)
+        estrella_rate_req_data[2] = 0x08;
+    else if (xtrate == 2) 
+        estrella_rate_req_data[2] = 0x10;
+
+    rc = usb_control_msg(
+            session->spec.usb_dev_handle,
+            usb_rate_req.requesttype | USB_TYPE_VENDOR, 
+            usb_rate_req.request, 
+            usb_rate_req.value, 
+            usb_rate_req.index, 
+            (char*)usb_rate_req.data, 
+            usb_rate_req.size, 
+            5000);
+    if (rc < 0)
+        return ESTRERR;
+
+    return ESTROK;
+}
+
+int estrella_usb_scan(estrella_session_t *session, float *buffer)
+{
+    int rc;
+    unsigned char scanbuf[4096];
+    unsigned char progress[2];
+    unsigned char response;
+    int i;
+    struct timespec req;
+
+    /* Data is being read from this endpoint adress */
+    int endpoint_bulk_in = 0x88;
+
+    /* Scan start request */
+    estrella_usb_request_t usb_scan_req = {
+        0x00,
+        0xb2,
+        0x0000,
+        0x0000,
+        0,
+        NULL,
+    };
+
+    /* Scan progress request. The windows driver sends this multiple times,
+     * usually the device answers with [0xb3,0x00]. In case we receive
+     * [0xb3,0x01] we need to initiate a bulk transfer to get the data from the
+     * device. */
+    estrella_usb_request_t usb_progress_req = {
+        0x00,
+        0xb3,
+        0x0000,
+        0x0000,
+        sizeof(progress),
+        progress,
+    };
+
+    if (session->spec.usb_dev_handle == NULL)
+        return ESTRINV;
+
+    /* Start the scan */
+    rc = usb_control_msg(
+            session->spec.usb_dev_handle,
+            usb_scan_req.requesttype | USB_TYPE_VENDOR, 
+            usb_scan_req.request, 
+            usb_scan_req.value, 
+            usb_scan_req.index, 
+            (char*)usb_scan_req.data, 
+            usb_scan_req.size, 
+            5000);
+    if (rc < 0)
+        return ESTRERR;
+
+    /* Continually query the device for completion. We're putting in 0,5 ms wait
+     * in between the requests. */
+    req.tv_sec = 0;
+    req.tv_nsec = 1000*500;
+
+    response = 0;
+    while (1==1) {
+
+        rc = usb_control_msg(
+                session->spec.usb_dev_handle,
+                usb_progress_req.requesttype | USB_TYPE_VENDOR | USB_ENDPOINT_IN, 
+                usb_progress_req.request, 
+                usb_progress_req.value, 
+                usb_progress_req.index, 
+                (char*)usb_progress_req.data, 
+                usb_progress_req.size, 
+                5000);
+        if (rc < 0) {
+            break;    
+        }
+
+        /* Either we're done scanning or we wait a bit to do the next request
+         * for completion. */
+        if (progress[1] == 0x01) {
+            response = 1;
+            break;
+        } else {
+            nanosleep(&req, NULL);
+        }
+    }
+
+    /* We did not get a valid response from the device */
+    if (response != 1)
+        return ESTRTIMEOUT;
+
+    /* Now get the data */
+    rc = usb_bulk_read(
+            session->spec.usb_dev_handle, 
+            endpoint_bulk_in, 
+            (char*)scanbuf, 
+            sizeof(scanbuf), 
+            4096);
+    if (rc < 0)
+        return ESTRERR;
+
+    /* Put the data that we got into the supplied buffer. For all I can see
+     * we're getting 2 bytes per value, which makes a total of 2048. I dont't
+     * know why the original API requests a 2051 elements buffer. Here's what
+     * they do anyway:
+     * Leave out the first value from the result set, which leaves us with 2047
+     * items. Those values are put into the result buffer from 0 to 2046. The
+     * remaining indices 2047 to 2050 are simply set to 0.
+     * Also I don't know why it has to be a float buffer. All we're getting is
+     * 16 bit integer values. */
+    for (i=2; i<4096;i+=2) {
+        unsigned short val = 0;
+        val |= scanbuf[i+1];
+        val = (val << 8);
+        val |= scanbuf[i];
+
+        buffer[(i-2)/2] = (float)val;
+    }
+    for (i=2047;i<2051;i++)
+        buffer[i] = 0.0;
+
+    return ESTROK;
+}
+
+int estrella_usb_close(estrella_session_t *session)
+{
+    /* Releasing the interface probably isn't necessary but it won't hurt either */
+    usb_release_interface(session->spec.usb_dev_handle, 0x00);
+    usb_close(session->spec.usb_dev_handle);
+
+    return ESTROK;
+}
+

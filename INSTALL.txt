@@ -1,0 +1,49 @@
+Here's some instructions on how to build and install estrella.
+
+1. Install libdll
+
+    Estrella uses libdll for some of it's device and session management. You
+    need to install libdll before proceeding to install estrella.
+
+    libdll can be obtained from http://github.com/bjoernr/libdll
+
+2. Make sure you have libusb (libusb.sourceforge.net) installed
+
+3. Create Makefiles (cmake needed)
+    
+    If you want to install into a non-standard location you can modify the
+    CMAKE_INSTALL_PREFIX cmake cache entry to change the destination using the
+    following cmake parameter:
+
+        -DCMAKE_INSTALL_PREFIX:PATH=/opt/estrella
+
+    You might want to tell cmake if you'd like to build tests or not. You will
+    need to have cunit (http://cunit.sourceforge.net/) installed in order to use
+    this, otherwise your build will fail:
+
+        -DESTRELLA_WITH_TESTS:BOOL=TRUE
+
+    I would suggest building out of tree, so make yourself a build directory
+    somewhere:
+
+        mkdir build
+        cd build
+
+    Finally run cmake with any of the above options. I prefixed the cmake
+    command with the CFLAGS that I wanted to use, you will probably want to use
+    your own ones. If in doubt just omit any CFLAGS.
+
+        CFLAGS="-march=nocona -O2 -pipe -Wall -Werror" cmake [OPTS] /path/to/estrella/src/
+
+4. Build
+    
+        make
+
+    Running make in your build directory will build the shared estrella library
+    and optionally an 'estrella_test' binary which tries to perform a simple scan
+    on the first spectrometer device it can find.
+
+5. Install
+
+        make install
+
