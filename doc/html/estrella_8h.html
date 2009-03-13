@@ -139,6 +139,10 @@ window.onload = initDynSections;
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices</a> (dll_list_t *devices)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#e91955add960d444de84774683f67b1d">estrella_num_devices</a> (int *num)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#b6e266423f77984b2aa198778070fe7a">estrella_get_device</a> (<a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *dev, int num)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#e8894fb93f05b6668a77afde11387c1e">estrella_init</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> *session, <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *dev)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#a542fe97797b954a06fbbf195be9a773">estrella_close</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session)</td></tr>
@@ -315,6 +319,76 @@ Note that if no devices are found the returned list is empty but the function ca
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
 ESTRERR Device discovery failed </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="e91955add960d444de84774683f67b1d"></a><!-- doxytag: member="estrella.h::estrella_num_devices" ref="e91955add960d444de84774683f67b1d" args="(int *num)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int estrella_num_devices           </td>
+          <td>(</td>
+          <td class="paramtype">int *&nbsp;</td>
+          <td class="paramname"> <em>num</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Find out about the number of spectrometer devices in the system<p>
+This function basically just calls <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> and returns the size of the list. It's provided for convenience in environments where it's difficult to handle dll_list_t items (e.g. LabVIEW). In regular C/C++ code you should be using <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> to minimize overhead.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>num</em>&nbsp;</td><td>Returns the number of devices found</td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
+ESTRINV Invalid parameter <p>
+ESTRERR Device scan failed </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="b6e266423f77984b2aa198778070fe7a"></a><!-- doxytag: member="estrella.h::estrella_get_device" ref="b6e266423f77984b2aa198778070fe7a" args="(estrella_dev_t *dev, int num)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int estrella_get_device           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *&nbsp;</td>
+          <td class="paramname"> <em>dev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>num</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get a device<p>
+Like <a class="el" href="estrella_8h.html#e91955add960d444de84774683f67b1d">estrella_num_devices()</a> this is just a convenience function. It calls <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> under the hood and returns device 'num' from the list.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>Pointer to an estrella_device_t struct </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>num</em>&nbsp;</td><td>The requested device number</td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
+ESTRINV Invalid parameter <p>
+ESTRERR Device not found </dd></dl>
 
 </div>
 </div><p>
@@ -565,7 +639,7 @@ ESTRINV A supplied input argument is invalid </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Mar 13 16:47:49 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Mar 13 17:50:56 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

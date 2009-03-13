@@ -160,6 +160,35 @@ typedef int estrella_session_handle_t;
  */
 int estrella_find_devices(dll_list_t *devices);
 
+/** Find out about the number of spectrometer devices in the system
+ *
+ * This function basically just calls estrella_find_devices() and returns the
+ * size of the list. It's provided for convenience in environments where it's
+ * difficult to handle dll_list_t items (e.g. LabVIEW). In regular C/C++ code
+ * you should be using estrella_find_devices() to minimize overhead.
+ *
+ * @param num           Returns the number of devices found
+ *
+ * @return ESTROK       No errors occured
+ * @return ESTRINV      Invalid parameter
+ * @return ESTRERR      Device scan failed
+ */
+int estrella_num_devices(int *num);
+
+/** Get a device
+ *
+ * Like estrella_num_devices() this is just a convenience function. It calls
+ * estrella_find_devices() under the hood and returns device 'num' from the list.
+ *
+ * @param dev           Pointer to an estrella_device_t struct
+ * @param num           The requested device number
+ *
+ * @return ESTROK       No errors occured
+ * @return ESTRINV      Invalid parameter
+ * @return ESTRERR      Device not found
+ */
+int estrella_get_device(estrella_dev_t *dev, int num);
+
 /** Initialize a session on a device
  *
  * Session is pretty much what the original driver means with "channel". This

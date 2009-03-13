@@ -101,6 +101,80 @@ int estrella_find_devices(dll_list_t *devices)
     return ESTROK;
 }
 
+int estrella_num_devices(int *num)
+{
+    int rc;
+    unsigned int listsize;
+    dll_list_t devices;
+
+    if (!num)
+        return ESTRINV;
+
+    rc = dll_new(&devices);
+    if (rc != EDLLOK)
+        return ESTRERR;
+
+    rc = estrella_find_devices(&devices);
+    if (rc != ESTROK) {
+        dll_free(&devices);
+        return ESTRERR;
+    }
+
+    rc = dll_count(&devices, &listsize);
+    if (rc != EDLLOK) {
+        dll_free(&devices);
+        return ESTRERR;
+    }
+
+    *num = (int)listsize;
+    dll_free(&devices);
+
+    return ESTROK;
+}
+
+int estrella_get_device(estrella_dev_t *dev, int num)
+{
+    int rc;
+    unsigned int listsize;
+    dll_list_t devices;
+    void *devtmp;
+
+    if (!dev)
+        return ESTRINV;
+
+    rc = dll_new(&devices);
+    if (rc != EDLLOK)
+        return ESTRERR;
+
+    rc = estrella_find_devices(&devices);
+    if (rc != ESTROK) {
+        dll_free(&devices);
+        return ESTRERR;
+    }
+
+    rc = dll_count(&devices, &listsize);
+if (rc != EDLLOK) {
+        dll_free(&devices);
+        return ESTRERR;
+    }
+
+    if ((num >= (int)listsize) || (num < 0)) {
+        dll_free(&devices);
+        return ESTRINV;
+    }
+
+    rc = dll_get(&devices, (void**)&devtmp, num);
+    if (rc != EDLLOK) {
+        dll_free(&devices);
+        return ESTRERR;
+    }
+
+    memcpy(dev, (estrella_dev_t*)devtmp, sizeof(estrella_dev_t));
+    dll_free(&devices);
+
+    return ESTROK;
+}
+
 int estrella_init(estrella_session_handle_t *session, estrella_dev_t *dev)
 {
     int rc;
