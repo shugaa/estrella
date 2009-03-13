@@ -26,6 +26,7 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <time.h>
 #include "estrella_private.h"
 
 /* ######################################################################### */
@@ -43,6 +44,63 @@
 /* ######################################################################### */
 /*                           Implementation                                  */
 /* ######################################################################### */
+
+int estrella_usleep(unsigned long us, unsigned long *rem)
+{
+    int rc;
+    struct timespec req;
+    UNUSED(rem);
+
+    req.tv_sec = us/1000;
+    req.tv_nsec = (us%1000)*1000;
+
+    rc = nanosleep(&req, NULL);
+    if (rc != 0)
+        return ESTRERR;
+
+    return ESTROK;
+}
+
+int estrella_timestamp_get(estr_timestamp_t *ts)
+{
+    int rc = gettimeofday((struct timeval*)ts, NULL);
+    if (rc != 0)
+        return ESTRERR;
+    
+    return ESTROK;    
+}
+
+int estrella_timestamp_diffms(estr_timestamp_t *ts1, estr_timestamp_t *ts2, unsigned long *diff)
+{
+    unsigned long ms_passed = 0;
+    unsigned long stv1_adds = 0;
+    unsigned long stv1_ussub = 0;
+    struct timeval *stv1, *stv2;
+
+    stv1 = (struct timeval*)ts1;
+    stv2 = (struct timeval*)ts2;
+
+    if (stv1->tv_sec > stv2->tv_sec) {
+        stv1 = (struct timeval*)ts2;
+        stv2 = (struct timeval*)ts1;
+    } 
+
+    if (stv2->tv_sec != stv1->tv_sec) {
+        ms_passed += ((1000*1000)-stv1->tv_usec)/1000;
+        stv1_adds = 1;
+        stv1_ussub = stv1->tv_usec;
+    } else if (stv1->tv_usec > stv2->tv_usec) {
+        stv1 = (struct timeval*)ts2;
+        stv2 = (struct timeval*)ts1; 
+    }
+
+    ms_passed += (stv2->tv_sec - (stv1->tv_sec+stv1_adds))*1000;
+    ms_passed += (stv2->tv_usec - (stv1->tv_usec-stv1_ussub))/1000;
+
+    *diff = ms_passed; 
+
+    return ESTROK;
+}
 
 void *estrella_malloc(size_t size)
 {

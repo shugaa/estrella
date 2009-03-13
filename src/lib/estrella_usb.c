@@ -30,7 +30,6 @@
 #include "estrella_private.h"
 #include "estrella_usb.h"
 
-#include <time.h>
 #include <string.h>
 
 /* ######################################################################### */
@@ -40,6 +39,9 @@
 /* ######################################################################### */
 /*                            Types & Defines                                */
 /* ######################################################################### */
+
+/* When a scan takes (rate + PRV_DELAY) we consider it a timeout */
+#define PRV_DELAY       (100)
 
 struct usb_ident {
     int id_vendor;
@@ -314,7 +316,7 @@ int estrella_usb_init(estrella_session_t *session, estrella_dev_t *device)
     return ESTROK;
 }
 
-int estrella_usb_rate(estrella_session_t *session, int rate, int xtrate)
+int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate)
 {
     int rc;
 
@@ -349,9 +351,9 @@ int estrella_usb_rate(estrella_session_t *session, int rate, int xtrate)
      * must be more to it though, since the rate seems to be adjusted, too when
      * you select xtrate 1 or 2. I just can't seem to find out what's going on
      * there. */
-    if (xtrate == 1)
+    if (xtrate == ESTR_XRES_MEDIUM)
         estrella_rate_req_data[2] = 0x08;
-    else if (xtrate == 2) 
+    else if (xtrate == ESTR_XRES_HIGH) 
         estrella_rate_req_data[2] = 0x10;
 
     rc = usb_control_msg(
@@ -376,7 +378,7 @@ int estrella_usb_scan(estrella_session_t *session, float *buffer)
     unsigned char progress[2];
     unsigned char response;
     int i;
-    struct timespec req;
+    estr_timestamp_t ts_start, ts_current;
 
     /* Data is being read from this endpoint adress */
     int endpoint_bulk_in = 0x88;
@@ -420,10 +422,10 @@ int estrella_usb_scan(estrella_session_t *session, float *buffer)
     if (rc < 0)
         return ESTRERR;
 
-    /* Continually query the device for completion. We're putting in 0,5 ms wait
-     * in between the requests. */
-    req.tv_sec = 0;
-    req.tv_nsec = 1000*500;
+    /* Time at beginning of scan */
+    rc = estrella_timestamp_get(&ts_start);
+    if (rc != ESTROK)
+        return ESTRERR;
 
     response = 0;
     while (1==1) {
@@ -441,20 +443,44 @@ int estrella_usb_scan(estrella_session_t *session, float *buffer)
             break;    
         }
 
+        /* If we're in normal operation mode we eventually need to break with a
+         * timeout. This is being checked here. */
+        if (session->xtmode != ESTR_XTMODE_TRIGGER) {
+            unsigned long mspassed;
+
+            rc = estrella_timestamp_get(&ts_current);
+            if (rc != ESTROK)
+                return ESTRERR;
+
+            rc = estrella_timestamp_diffms(&ts_start, &ts_current, &mspassed);
+            if (rc != ESTROK)
+                return ESTRERR;
+
+            if (mspassed >= (session->rate + PRV_DELAY))
+                break;
+        }
+
         /* Either we're done scanning or we wait a bit to do the next request
          * for completion. */
         if (progress[1] == 0x01) {
             response = 1;
             break;
         } else {
-            nanosleep(&req, NULL);
+            /* We don't care if this succeeds of fails, just go on to the next
+             * ieration. */
+            estrella_usleep(500, NULL);
         }
     }
 
-    /* We did not get a valid response from the device */
-    if (response != 1)
-        return ESTRTIMEOUT;
-
+    /* We did not get a valid response from the device. Return a timeout only in
+     * normal operations mode */
+    if (response != 1) {
+        if (session->xtmode != ESTR_XTMODE_TRIGGER)
+            return ESTRTIMEOUT;
+        else 
+            return ESTRERR;
+    }
+        
     /* Now get the data */
     rc = usb_bulk_read(
             session->spec.usb_dev_handle, 

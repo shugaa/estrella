@@ -39,14 +39,19 @@
 /*                            Types & Defines                                */
 /* ######################################################################### */
 
+#ifndef UNUSED
+#define UNUSED(x) ((void)(x))
+#endif
+
 typedef struct {
     estrella_session_handle_t handle;
 
-    int xtrate;
     int rate;
     int scanstoavg;
-    int xsmooth;
-    int tempcomp;
+    estr_xtmode_t xtmode;
+    estr_xtrate_t xtrate;
+    estr_xsmooth_t xsmooth;
+    estr_tempcomp_t tempcomp;
 
     estrella_dev_t dev;
     union {
@@ -55,9 +60,44 @@ typedef struct {
     } spec;
 } estrella_session_t;
 
+typedef struct timeval estr_timestamp_t;
+
 /* ######################################################################### */
 /*                           Private interface (Lib)                         */
 /* ######################################################################### */
+
+/** Sleep microseconds
+ *
+ * TODO: rem does not yet return the remainder
+ *
+ * @param us            Number of microseconds to sleep
+ * @param rem           If we failed to sleep for the requested number of
+ *                      microseconds rem returns the time remaining.
+ *
+ * @return ESTROK       Success
+ * @return ESTRERR      Failed to sleep for the given number of us
+ */
+int estrella_usleep(unsigned long us, unsigned long *rem);
+
+/** Get a timestamp
+ *
+ * @param ts            Timestamp variable
+ *
+ * @return ESTROK       Success
+ * @return ESTRERR      Error
+ */
+int estrella_timestamp_get(estr_timestamp_t *ts);
+
+/** Get the difference in milliseconds between two timestamps
+ *
+ * @param ts1           Pointer to first timestamp
+ * @parma ts2           Pointer to second timestamp
+ * @param diff          Returns the difference in milliseconds
+ *
+ * @return ESTROK       Diff successfully calculated
+ * @return ESTRERR      Diff could not be calculated
+ */
+int estrella_timestamp_diffms(estr_timestamp_t *ts1, estr_timestamp_t *ts2, unsigned long *diff);
 
 /** Allocate memory 
  *

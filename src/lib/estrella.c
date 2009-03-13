@@ -146,11 +146,12 @@ int estrella_init(estrella_session_handle_t *session, estrella_dev_t *dev)
         return ESTRERR;
 
     /* These should be the default settings */
-    newsession->xtrate = 2;
+    newsession->xtrate = ESTR_XRES_HIGH;
     newsession->rate = 18;
     newsession->scanstoavg = 1;
-    newsession->xsmooth = 0;
-    newsession->tempcomp = 0;
+    newsession->xsmooth = ESTR_XSMOOTH_NONE;
+    newsession->tempcomp = ESTR_TEMPCOMP_OFF;
+    newsession->xtmode = ESTR_XTMODE_NORMAL;
 
     /* Return a handle to the new session */
     *session = newhandle;
@@ -210,7 +211,25 @@ int estrella_close(estrella_session_handle_t session)
     return ESTROK;
 }
 
-int estrella_rate(estrella_session_handle_t session, int rate, int xtrate)
+int estrella_mode(estrella_session_handle_t session, estr_xtmode_t xtmode)
+{
+    int rc;
+    estrella_session_t *psession = NULL;
+
+    /* Find the session referenced by the supplied handle */
+    rc = prv_find_session(session, &psession);
+    if (rc != ESTROK)
+        return ESTRINV;
+
+    if ((xtmode >= ESTR_XTMODE_TYPES) || (xtmode < 0))
+        return ESTRINV;
+
+    psession->xtmode = xtmode;
+
+    return ESTROK;
+}
+
+int estrella_rate(estrella_session_handle_t session, int rate, estr_xtrate_t xtrate)
 {
     int rc;
     estrella_session_t *psession = NULL;
@@ -221,7 +240,7 @@ int estrella_rate(estrella_session_handle_t session, int rate, int xtrate)
         return ESTRINV;
 
     /* Check xtrate parameter validity */
-    if ((xtrate < 0) || (xtrate > 2))
+    if ((xtrate >= ESTR_XRES_TYPES) || (xtrate < 0))
         return ESTRINV;
 
     /* We can not go lower than 2 ms and not longer than 65500 */
@@ -309,7 +328,7 @@ int estrella_scan(estrella_session_handle_t session, float *buffer)
     return ESTROK;
 }
 
-int estrella_update(estrella_session_handle_t session, int scanstoavg, int xsmooth, int tempcomp)
+int estrella_update(estrella_session_handle_t session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp)
 {
     int rc;
     estrella_session_t *psession = NULL;
@@ -323,10 +342,10 @@ int estrella_update(estrella_session_handle_t session, int scanstoavg, int xsmoo
     if ((scanstoavg > 99) || (scanstoavg < 1))
         return ESTRINV;
     
-    if ((xsmooth > 4) || (xsmooth < 0))
+    if ((xsmooth >= ESTR_XSMOOTH_TYPES) || (xsmooth < 0))
         return ESTRINV;
 
-    if ((tempcomp > 1) || (tempcomp < 0))
+    if ((tempcomp >= ESTR_TEMPCOMP_TYPES) || (tempcomp < 0))
         return ESTRINV;
 
     /* Set the new parameters */

@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         printf("Unable to search for usb devices\n");
         return 1;
     }
-   
+
     rc = dll_count(&devices, &numdevices);
     if ((rc != EDLLOK) || (numdevices == 0)) {
         printf("No devices found\n");
@@ -61,15 +61,15 @@ int main(int argc, char *argv[])
 
         printf("DEVICE %d\n", i);
 
-    switch (dev->devicetype) {
+        switch (dev->devicetype) {
             case ESTRELLA_DEV_USB:
-                printf("   type:   USB\n");
-                printf("   bus:    %s\n", dev->spec.usb.bus);
-                printf("   device: %d\n", dev->spec.usb.devnum);
+                printf("   type:    USB\n");
+                printf("   bus:     %s\n", dev->spec.usb.bus);
+                printf("   device:  %d\n", dev->spec.usb.devnum);
 
                 break;
             default:
-                printf("   type:          LPT\n");
+                printf("   type:    LPT\n");
                 break;
         }
     }

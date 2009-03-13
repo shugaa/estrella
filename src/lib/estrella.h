@@ -72,6 +72,40 @@
 #define ESTRNOMEM           (3)
 #define ESTRTIMEOUT         (4)
 
+/* NOTE: The *_TYPES entry must always be last */
+
+/** Estrella operation modes */
+typedef enum {
+    ESTR_XTMODE_NORMAL    = (0),
+    ESTR_XTMODE_TRIGGER,
+    ESTR_XTMODE_TYPES,
+} estr_xtmode_t;
+
+/** Estrella xsmoothing setting */
+typedef enum {
+    ESTR_XSMOOTH_NONE     = (0),
+    ESTR_XSMOOTH_5PX,
+    ESTR_XSMOOTH_9PX,
+    ESTR_XSMOOTH_17PX,
+    ESTR_XSMOOTH_33PX,
+    ESTR_XSMOOTH_TYPES,
+} estr_xsmooth_t;
+
+/** Estrella temperature compensation */
+typedef enum {
+    ESTR_TEMPCOMP_OFF     = (0),
+    ESTR_TEMPCOMP_ON,
+    ESTR_TEMPCOMP_TYPES,
+} estr_tempcomp_t;
+
+/** Xtiming resolution parameters */
+typedef enum {
+    ESTR_XRES_LOW         = (0),
+    ESTR_XRES_MEDIUM,
+    ESTR_XRES_HIGH,
+    ESTR_XRES_TYPES,
+} estr_xtrate_t;
+
 /** Indicates the device type.
  *
  * Spectrometers may be connected to the computer through USB or the parallel
@@ -158,13 +192,28 @@ int estrella_close(estrella_session_handle_t session);
  *
  * @param session       Session
  * @param rate          Detector integration rate in ms (2-65500)
- * @param xtrate        0-2, where 2 is the slowest but provides the highest resolution
+ * @param xtrate        ESTR_XRES_LOW/MEDIUM/HIGH. ESTR_XRES_HIGH is the slowest but provides the highest resolution
  *
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
  * @return ESTRERR      Could not set rate
  */
-int estrella_rate(estrella_session_handle_t session, int rate, int xtrate);
+int estrella_rate(estrella_session_handle_t session, int rate, estr_xtrate_t xtrate);
+
+/** Set the mode of operation
+ *
+ * In normal operation mode estrella_scan() will return ESTRTIMEOUT if it does not
+ * receive any reply from the spectrometer device in time. When controlling
+ * operations using a trigger input estrella will wait until it receives any
+ * data, no matter how long that might take.
+ *
+ * @param session       Session
+ * @param xtmode        ESTR_XTMODE_NORMAL: Normal operation, ESTR_XTMODE_TRIGGER: External trigger
+ *
+ * @return ESTROK       No errors occured
+ * @return ESTRINV      A supplied input argument is invalid
+ */
+int estrella_mode(estrella_session_handle_t session, estr_xtmode_t xtmode);
 
 /** Acquire a spectral scan
  *
@@ -173,7 +222,7 @@ int estrella_rate(estrella_session_handle_t session, int rate, int xtrate);
  *
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
- * @return ESTRTIMEOUT  Scan timed out
+ * @return ESTRTIMEOUT  Scan timed out (in normal operations mode)
  * @return ESTRERR      Scan failed
  */
 int estrella_scan(estrella_session_handle_t session, float *buffer);
@@ -182,14 +231,15 @@ int estrella_scan(estrella_session_handle_t session, float *buffer);
  *
  * TODO: xsmoothing and temperature compensation have not yet been implemented
  *
+ * @oaram session       Session
  * @param scanstoavg    Scans to perform and average (1-99)
- * @param xsmooth       (0=none, 1=5px, 2=9px, 3=17px, 4=33px)
- * @param tempcomp      0=off, 1=on
+ * @param xsmooth       Smoothing. For possible values have a look at ESTR_XSMOOTH*
+ * @param tempcomp      Temperature compensation. ESTR_TEMPCOMP_OFF or ESTR_TEMPCOMP_ON
  *
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
  */
-int estrella_update(estrella_session_handle_t session, int scanstoavg, int xsmooth, int tempcomp);
+int estrella_update(estrella_session_handle_t session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp);
 
 #endif /* _ESTRELLA_H */
 

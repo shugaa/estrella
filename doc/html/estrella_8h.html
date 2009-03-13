@@ -85,6 +85,50 @@ window.onload = initDynSections;
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a></td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a> { <br>
+&nbsp;&nbsp;<b>ESTR_XTMODE_NORMAL</b> =  (0), 
+<br>
+&nbsp;&nbsp;<b>ESTR_XTMODE_TRIGGER</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_XTMODE_TYPES</b>
+<br>
+ }</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a> { <br>
+&nbsp;&nbsp;<b>ESTR_XSMOOTH_NONE</b> =  (0), 
+<br>
+&nbsp;&nbsp;<b>ESTR_XSMOOTH_5PX</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_XSMOOTH_9PX</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_XSMOOTH_17PX</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_XSMOOTH_33PX</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_XSMOOTH_TYPES</b>
+<br>
+ }</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a> { <br>
+&nbsp;&nbsp;<b>ESTR_TEMPCOMP_OFF</b> =  (0), 
+<br>
+&nbsp;&nbsp;<b>ESTR_TEMPCOMP_ON</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_TEMPCOMP_TYPES</b>
+<br>
+ }</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a> { <br>
+&nbsp;&nbsp;<b>ESTR_XRES_LOW</b> =  (0), 
+<br>
+&nbsp;&nbsp;<b>ESTR_XRES_MEDIUM</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_XRES_HIGH</b>, 
+<br>
+&nbsp;&nbsp;<b>ESTR_XRES_TYPES</b>
+<br>
+ }</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#81b17e2fedb6029889e010cf4155042a">estrella_devicetype_t</a> { <br>
 &nbsp;&nbsp;<b>ESTRELLA_DEV_USB</b>, 
 <br>
@@ -99,11 +143,13 @@ window.onload = initDynSections;
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#a542fe97797b954a06fbbf195be9a773">estrella_close</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#21f1e7d43347ab0a19d2357eefa1f82b">estrella_rate</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, int rate, int xtrate)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#a169b1c4a06a4df7f2532b63eb04c0a7">estrella_rate</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, int rate, <a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a> xtrate)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#4e8af384e4901640a6fa54f713a70d2a">estrella_mode</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, <a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a> xtmode)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#0be929e5d969ca085921bbff8da5de84">estrella_scan</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, float *buffer)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#4ad4d38b49995a8c473c1620f92dd6da">estrella_update</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, int scanstoavg, int xsmooth, int tempcomp)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#cc416d2cb0eecb264ccfbf66721f777f">estrella_update</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, int scanstoavg, <a class="el" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a> xsmooth, <a class="el" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a> tempcomp)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -127,6 +173,98 @@ Used by the client to identify his session.
 </div>
 </div><p>
 <hr><h2>Enumeration Type Documentation</h2>
+<a class="anchor" name="b43becb43529d23b80350b7ed4787e01"></a><!-- doxytag: member="estrella.h::estr_xtmode_t" ref="b43becb43529d23b80350b7ed4787e01" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Estrella operation modes <div class="fragment"><pre class="fragment"><a name="l00078"></a>00078              {
+<a name="l00079"></a>00079     ESTR_XTMODE_NORMAL    = (0),
+<a name="l00080"></a>00080     ESTR_XTMODE_TRIGGER,
+<a name="l00081"></a>00081     ESTR_XTMODE_TYPES,
+<a name="l00082"></a>00082 } <a class="code" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a>;
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="10245e0bad33141b33feeadd78cb852f"></a><!-- doxytag: member="estrella.h::estr_xsmooth_t" ref="10245e0bad33141b33feeadd78cb852f" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Estrella xsmoothing setting <div class="fragment"><pre class="fragment"><a name="l00085"></a>00085              {
+<a name="l00086"></a>00086     ESTR_XSMOOTH_NONE     = (0),
+<a name="l00087"></a>00087     ESTR_XSMOOTH_5PX,
+<a name="l00088"></a>00088     ESTR_XSMOOTH_9PX,
+<a name="l00089"></a>00089     ESTR_XSMOOTH_17PX,
+<a name="l00090"></a>00090     ESTR_XSMOOTH_33PX,
+<a name="l00091"></a>00091     ESTR_XSMOOTH_TYPES,
+<a name="l00092"></a>00092 } <a class="code" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a>;
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="08485e44c5331ad6039da979fd357909"></a><!-- doxytag: member="estrella.h::estr_tempcomp_t" ref="08485e44c5331ad6039da979fd357909" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Estrella temperature compensation <div class="fragment"><pre class="fragment"><a name="l00095"></a>00095              {
+<a name="l00096"></a>00096     ESTR_TEMPCOMP_OFF     = (0),
+<a name="l00097"></a>00097     ESTR_TEMPCOMP_ON,
+<a name="l00098"></a>00098     ESTR_TEMPCOMP_TYPES,
+<a name="l00099"></a>00099 } <a class="code" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a>;
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="d961eae1be381cfd9f87f556c9940b6f"></a><!-- doxytag: member="estrella.h::estr_xtrate_t" ref="d961eae1be381cfd9f87f556c9940b6f" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Xtiming resolution parameters <div class="fragment"><pre class="fragment"><a name="l00102"></a>00102              {
+<a name="l00103"></a>00103     ESTR_XRES_LOW         = (0),
+<a name="l00104"></a>00104     ESTR_XRES_MEDIUM,
+<a name="l00105"></a>00105     ESTR_XRES_HIGH,
+<a name="l00106"></a>00106     ESTR_XRES_TYPES,
+<a name="l00107"></a>00107 } <a class="code" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a>;
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="81b17e2fedb6029889e010cf4155042a"></a><!-- doxytag: member="estrella.h::estrella_devicetype_t" ref="81b17e2fedb6029889e010cf4155042a" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -140,10 +278,10 @@ Used by the client to identify his session.
 
 <p>
 Indicates the device type.<p>
-Spectrometers may be connected to the computer through USB or the parallel port. While at the moment this driver can only handle USB connected devices ist should be fairly easy to implement LPT communications. Provided you know about the protocol of course. <div class="fragment"><pre class="fragment"><a name="l00081"></a>00081              {
-<a name="l00082"></a>00082     ESTRELLA_DEV_USB,
-<a name="l00083"></a>00083     ESTRELLA_DEV_LPT,
-<a name="l00084"></a>00084 } <a class="code" href="estrella_8h.html#81b17e2fedb6029889e010cf4155042a">estrella_devicetype_t</a>;
+Spectrometers may be connected to the computer through USB or the parallel port. While at the moment this driver can only handle USB connected devices ist should be fairly easy to implement LPT communications. Provided you know about the protocol of course. <div class="fragment"><pre class="fragment"><a name="l00115"></a>00115              {
+<a name="l00116"></a>00116     ESTRELLA_DEV_USB,
+<a name="l00117"></a>00117     ESTRELLA_DEV_LPT,
+<a name="l00118"></a>00118 } <a class="code" href="estrella_8h.html#81b17e2fedb6029889e010cf4155042a">estrella_devicetype_t</a>;
 </pre></div>
 <p>
 
@@ -250,7 +388,7 @@ ESTRERR Session could not be destroyed </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="21f1e7d43347ab0a19d2357eefa1f82b"></a><!-- doxytag: member="estrella.h::estrella_rate" ref="21f1e7d43347ab0a19d2357eefa1f82b" args="(estrella_session_handle_t session, int rate, int xtrate)" -->
+<a class="anchor" name="a169b1c4a06a4df7f2532b63eb04c0a7"></a><!-- doxytag: member="estrella.h::estrella_rate" ref="a169b1c4a06a4df7f2532b63eb04c0a7" args="(estrella_session_handle_t session, int rate, estr_xtrate_t xtrate)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -269,7 +407,7 @@ ESTRERR Session could not be destroyed </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
+          <td class="paramtype"><a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a>&nbsp;</td>
           <td class="paramname"> <em>xtrate</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -287,12 +425,51 @@ Set integration time and timing resolution clock rate<p>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>rate</em>&nbsp;</td><td>Detector integration rate in ms (2-65500) </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>xtrate</em>&nbsp;</td><td>0-2, where 2 is the slowest but provides the highest resolution</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>xtrate</em>&nbsp;</td><td>ESTR_XRES_LOW/MEDIUM/HIGH. ESTR_XRES_HIGH is the slowest but provides the highest resolution</td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
 ESTRINV A supplied input argument is invalid <p>
 ESTRERR Could not set rate </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="4e8af384e4901640a6fa54f713a70d2a"></a><!-- doxytag: member="estrella.h::estrella_mode" ref="4e8af384e4901640a6fa54f713a70d2a" args="(estrella_session_handle_t session, estr_xtmode_t xtmode)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int estrella_mode           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a>&nbsp;</td>
+          <td class="paramname"> <em>session</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a>&nbsp;</td>
+          <td class="paramname"> <em>xtmode</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Set the mode of operation<p>
+In normal operation mode <a class="el" href="estrella_8h.html#0be929e5d969ca085921bbff8da5de84">estrella_scan()</a> will return ESTRTIMEOUT if it does not receive any reply from the spectrometer device in time. When controlling operations using a trigger input estrella will wait until it receives any data, no matter how long that might take.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>xtmode</em>&nbsp;</td><td>ESTR_XTMODE_NORMAL: Normal operation, ESTR_XTMODE_TRIGGER: External trigger</td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
+ESTRINV A supplied input argument is invalid </dd></dl>
 
 </div>
 </div><p>
@@ -331,12 +508,12 @@ Acquire a spectral scan<p>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
 ESTRINV A supplied input argument is invalid <p>
-ESTRTIMEOUT Scan timed out <p>
+ESTRTIMEOUT Scan timed out (in normal operations mode) <p>
 ESTRERR Scan failed </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="4ad4d38b49995a8c473c1620f92dd6da"></a><!-- doxytag: member="estrella.h::estrella_update" ref="4ad4d38b49995a8c473c1620f92dd6da" args="(estrella_session_handle_t session, int scanstoavg, int xsmooth, int tempcomp)" -->
+<a class="anchor" name="cc416d2cb0eecb264ccfbf66721f777f"></a><!-- doxytag: member="estrella.h::estrella_update" ref="cc416d2cb0eecb264ccfbf66721f777f" args="(estrella_session_handle_t session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -355,13 +532,13 @@ ESTRERR Scan failed </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
+          <td class="paramtype"><a class="el" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a>&nbsp;</td>
           <td class="paramname"> <em>xsmooth</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
+          <td class="paramtype"><a class="el" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a>&nbsp;</td>
           <td class="paramname"> <em>tempcomp</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -376,11 +553,11 @@ ESTRERR Scan failed </dd></dl>
 <p>
 Set data processing configuration<p>
 TODO: xsmoothing and temperature compensation have not yet been implemented<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
+session Session <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>scanstoavg</em>&nbsp;</td><td>Scans to perform and average (1-99) </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>xsmooth</em>&nbsp;</td><td>(0=none, 1=5px, 2=9px, 3=17px, 4=33px) </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>tempcomp</em>&nbsp;</td><td>0=off, 1=on</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>xsmooth</em>&nbsp;</td><td>Smoothing. For possible values have a look at ESTR_XSMOOTH* </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>tempcomp</em>&nbsp;</td><td>Temperature compensation. ESTR_TEMPCOMP_OFF or ESTR_TEMPCOMP_ON</td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
@@ -388,7 +565,7 @@ ESTRINV A supplied input argument is invalid </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 26 21:37:42 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Mar 13 16:47:49 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

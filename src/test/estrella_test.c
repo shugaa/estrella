@@ -71,14 +71,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    rc = estrella_update(esession, 1, 0, 0);
+    rc = estrella_update(esession, 1, ESTR_XSMOOTH_NONE, ESTR_TEMPCOMP_OFF);
     if (rc != 0) {
         printf("Unable to set data processing configuration\n");
         estrella_close(esession);
         return 1;
     }
 
-    rc = estrella_rate(esession, 20, 0);
+    rc = estrella_rate(esession, 20, ESTR_XRES_LOW);
     if (rc != 0) {
         printf("Unable to set rate\n");
         estrella_close(esession);

@@ -123,7 +123,7 @@ int estrella_usb_close(estrella_session_t *session);
  * @return ESTRINV      A supplie dinput argument is invalid 
  * @return ESTRERR      Failed to set rate 
  */
-int estrella_usb_rate(estrella_session_t *session, int rate, int xtrate);
+int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate);
 
 /** Perform a scan
  *
