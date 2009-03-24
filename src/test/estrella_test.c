@@ -31,17 +31,25 @@
 
 #include "estrella.h"
 
+/* Uncomment if on your platform there's no clock_gettime() */
+#define ESTRELLA_TEST_TIMING
+
+/* Uncomment if you dont want to have the scan result printed */
+#define ESTRELLA_TEST_RESULT
+
 int main(int argc, char *argv[]) 
 {
     int rc;
     dll_list_t devices;
     void *device = NULL;
     unsigned int numdevices = 0;
-    estrella_session_handle_t esession;
+    estrella_session_t esession;
     int i;
     float buffer[2051];
 
+#ifdef ESTRELLA_TEST_TIMING
     struct timespec tp1, tp2;
+#endif
 
     dll_init();
     dll_new(&devices);
@@ -49,65 +57,78 @@ int main(int argc, char *argv[])
     rc = estrella_find_devices(&devices);
     if (rc != 0) {
         printf("Unable to search for usb devices\n");
+        dll_free(&devices);
         return 1;
     }
    
     rc = dll_count(&devices, &numdevices);
     if ((rc != EDLLOK) || (numdevices == 0)) {
         printf("No devices found\n");
+        dll_free(&devices);
         return 1;
     }
 
     /* get the first of the found devices. */
     rc = dll_get(&devices, &device, 0);
     if (rc != EDLLOK) {
+        dll_free(&devices);
         return 1;
     }
 
     rc = estrella_init(&esession, (estrella_dev_t*)device);
     if (rc != 0) {
         printf("Unable to create session\n");
-        estrella_close(esession);
+        estrella_close(&esession);
+        dll_free(&devices);
         return 1;
     }
 
-    rc = estrella_update(esession, 1, ESTR_XSMOOTH_NONE, ESTR_TEMPCOMP_OFF);
+    rc = estrella_update(&esession, 1, ESTR_XSMOOTH_NONE, ESTR_TEMPCOMP_OFF);
     if (rc != 0) {
         printf("Unable to set data processing configuration\n");
-        estrella_close(esession);
+        estrella_close(&esession);
+        dll_free(&devices);
         return 1;
     }
 
-    rc = estrella_rate(esession, 20, ESTR_XRES_LOW);
+    rc = estrella_rate(&esession, 20, ESTR_XRES_LOW);
     if (rc != 0) {
         printf("Unable to set rate\n");
-        estrella_close(esession);
+        estrella_close(&esession);
+        dll_free(&devices);
         return 1;
     }
 
+#ifdef ESTRELLA_TEST_TIMING
     clock_gettime(CLOCK_MONOTONIC, &tp1);
-    for(i=0;i<2000;i++) 
-        rc = estrella_scan(esession, buffer);
+#endif
 
+    for(i=0;i<2000;i++) 
+        rc = estrella_scan(&esession, buffer);
+
+#ifdef ESTRELLA_TEST_TIMING
     clock_gettime(CLOCK_MONOTONIC, &tp2);
+#endif
 
     if (rc != 0) {
         printf("Unable to scan\n");
-        estrella_close(esession);
+        estrella_close(&esession);
+        dll_free(&devices);
         return 1;
     }
 
+#ifdef ESTRELLA_TEST_TIMING
     tp2.tv_sec -= tp1.tv_sec;
     tp2.tv_nsec -= tp1.tv_nsec;
+    printf("Scanning took %ds, %dus\n", (unsigned int)tp2.tv_sec, (unsigned int)(tp2.tv_nsec/(1000)));
+#endif
 
-    printf("scanning took %ds, %dus\n", (unsigned int)tp2.tv_sec, (unsigned int)(tp2.tv_nsec/(1000)));
+#ifdef ESTRELLA_TEST_RESULT
+    for (i=0;i<2000;i++)
+        printf("item %d: %f\n", i, buffer[i]);
+#endif
 
-
-//BR     for (i=0;i<2000;i++)
-//BR         printf("item %d: %f\n", i, buffer[i]);
-
-    estrella_close(esession);
-
+    estrella_close(&esession);
     dll_free(&devices);
 
     return 0;

@@ -63,13 +63,13 @@ window.onload = initDynSections;
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#6fcadcd3641ad2611f0e07f67f9ec716">estrella_usb_find_devices</a> (dll_list_t *devices)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#386d0e7141726ce4b1a369f9acdcbdaa">estrella_usb_init</a> (estrella_session_t *session, <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *device)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#386d0e7141726ce4b1a369f9acdcbdaa">estrella_usb_init</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *device)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#cb8cfb068e65abfb84e44331ad70da68">estrella_usb_close</a> (estrella_session_t *session)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#cb8cfb068e65abfb84e44331ad70da68">estrella_usb_close</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#f88544e8b3377c894be5867fd5038b18">estrella_usb_rate</a> (estrella_session_t *session, int rate, <a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a> xtrate)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#f88544e8b3377c894be5867fd5038b18">estrella_usb_rate</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, int rate, <a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a> xtrate)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#de1849dd67e63969048b014e48e9e614">estrella_usb_scan</a> (estrella_session_t *session, float *buffer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#de1849dd67e63969048b014e48e9e614">estrella_usb_scan</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, float *buffer)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -115,7 +115,7 @@ ESTRERR Device discovery failed </dd></dl>
         <tr>
           <td class="memname">int estrella_usb_init           </td>
           <td>(</td>
-          <td class="paramtype">estrella_session_t *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -154,7 +154,7 @@ ESTRERR Device initialization failed </dd></dl>
         <tr>
           <td class="memname">int estrella_usb_close           </td>
           <td>(</td>
-          <td class="paramtype">estrella_session_t *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
@@ -182,7 +182,7 @@ This basically just detaches from libusb. Which is important because it frees th
         <tr>
           <td class="memname">int estrella_usb_rate           </td>
           <td>(</td>
-          <td class="paramtype">estrella_session_t *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -228,7 +228,7 @@ ESTRERR Failed to set rate </dd></dl>
         <tr>
           <td class="memname">int estrella_usb_scan           </td>
           <td>(</td>
-          <td class="paramtype">estrella_session_t *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -261,7 +261,7 @@ ESTRERR Scan failed </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Mar 13 17:50:56 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 24 20:44:35 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

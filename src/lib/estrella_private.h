@@ -43,23 +43,6 @@
 #define UNUSED(x) ((void)(x))
 #endif
 
-typedef struct {
-    estrella_session_handle_t handle;
-
-    int rate;
-    int scanstoavg;
-    estr_xtmode_t xtmode;
-    estr_xtrate_t xtrate;
-    estr_xsmooth_t xsmooth;
-    estr_tempcomp_t tempcomp;
-
-    estrella_dev_t dev;
-    union {
-        struct usb_dev_handle *usb_dev_handle; 
-        /* Add your LPT handle here */
-    } spec;
-} estrella_session_t;
-
 typedef struct timeval estr_timestamp_t;
 
 /* ######################################################################### */

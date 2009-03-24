@@ -62,6 +62,8 @@ window.onload = initDynSections;
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structestrella__dev__t.html">estrella_dev_t</a></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structestrella__session__t.html">estrella_session_t</a></td></tr>
+
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="87d8bee6352c83cc0381abd8e5c5f412"></a><!-- doxytag: member="estrella.h::ESTRELLA_PATH_MAX" ref="87d8bee6352c83cc0381abd8e5c5f412" args="" -->
 #define&nbsp;</td><td class="memItemRight" valign="bottom"><b>ESTRELLA_PATH_MAX</b>&nbsp;&nbsp;&nbsp;(256)</td></tr>
@@ -80,9 +82,6 @@ window.onload = initDynSections;
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="730b6f0ffd878fc1d04b08650ccf1734"></a><!-- doxytag: member="estrella.h::ESTRTIMEOUT" ref="730b6f0ffd878fc1d04b08650ccf1734" args="" -->
 #define&nbsp;</td><td class="memItemRight" valign="bottom"><b>ESTRTIMEOUT</b>&nbsp;&nbsp;&nbsp;(4)</td></tr>
-
-<tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a></td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a> { <br>
@@ -143,39 +142,22 @@ window.onload = initDynSections;
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#b6e266423f77984b2aa198778070fe7a">estrella_get_device</a> (<a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *dev, int num)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#e8894fb93f05b6668a77afde11387c1e">estrella_init</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> *session, <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *dev)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#c2bea81643fac63eb0a821f70a123a40">estrella_init</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> *dev)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#a542fe97797b954a06fbbf195be9a773">estrella_close</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#d84f7aaad7e80a6e8ba366f2972e1305">estrella_close</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#a169b1c4a06a4df7f2532b63eb04c0a7">estrella_rate</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, int rate, <a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a> xtrate)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#f6c99a18f9e4f10cbbeb10581c3b3c88">estrella_rate</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, int rate, <a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a> xtrate)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#4e8af384e4901640a6fa54f713a70d2a">estrella_mode</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, <a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a> xtmode)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#2646d00473f09899c738eeb49a26d4bd">estrella_mode</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, <a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a> xtmode)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#0be929e5d969ca085921bbff8da5de84">estrella_scan</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, float *buffer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#b59e11b58f809ce477bb57020a24c8bd">estrella_scan</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, float *buffer)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#cc416d2cb0eecb264ccfbf66721f777f">estrella_update</a> (<a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> session, int scanstoavg, <a class="el" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a> xsmooth, <a class="el" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a> tempcomp)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#ca45e90b2f8a4af30b4e2c58e0aff809">estrella_update</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, int scanstoavg, <a class="el" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a> xsmooth, <a class="el" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a> tempcomp)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Public driver interface. 
 <p>
-<hr><h2>Typedef Documentation</h2>
-<a class="anchor" name="9e32a165a0a3e6f6d73703996069c045"></a><!-- doxytag: member="estrella.h::estrella_session_handle_t" ref="9e32a165a0a3e6f6d73703996069c045" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef int <a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Session handle.<p>
-Used by the client to identify his session. 
-</div>
-</div><p>
 <hr><h2>Enumeration Type Documentation</h2>
 <a class="anchor" name="b43becb43529d23b80350b7ed4787e01"></a><!-- doxytag: member="estrella.h::estr_xtmode_t" ref="b43becb43529d23b80350b7ed4787e01" args="" -->
 <div class="memitem">
@@ -310,7 +292,7 @@ Spectrometers may be connected to the computer through USB or the parallel port.
 
 <p>
 Find devices connected to the host<p>
-If necessary initialization (namely firmware loading) is being performed transparently. This function gives you a set of <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> items, which you can use to create sessions using <a class="el" href="estrella_8h.html#e8894fb93f05b6668a77afde11387c1e">estrella_init()</a>.<p>
+If necessary initialization (namely firmware loading) is being performed transparently. This function gives you a set of <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> items, which you can use to create sessions using <a class="el" href="estrella_8h.html#c2bea81643fac63eb0a821f70a123a40">estrella_init()</a>.<p>
 Note that if no devices are found the returned list is empty but the function call returns no errors.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -382,7 +364,7 @@ Get a device<p>
 Like <a class="el" href="estrella_8h.html#e91955add960d444de84774683f67b1d">estrella_num_devices()</a> this is just a convenience function. It calls <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> under the hood and returns device 'num' from the list.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>Pointer to an estrella_device_t struct </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>Pointer to an estrella_device_t struct which is to be populated with device information </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>num</em>&nbsp;</td><td>The requested device number</td></tr>
   </table>
 </dl>
@@ -392,14 +374,14 @@ ESTRERR Device not found </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="e8894fb93f05b6668a77afde11387c1e"></a><!-- doxytag: member="estrella.h::estrella_init" ref="e8894fb93f05b6668a77afde11387c1e" args="(estrella_session_handle_t *session, estrella_dev_t *dev)" -->
+<a class="anchor" name="c2bea81643fac63eb0a821f70a123a40"></a><!-- doxytag: member="estrella.h::estrella_init" ref="c2bea81643fac63eb0a821f70a123a40" args="(estrella_session_t *session, estrella_dev_t *dev)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int estrella_init           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a> *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -422,7 +404,7 @@ Initialize a session on a device<p>
 Session is pretty much what the original driver means with "channel". This implementation provides the advantage though that you actually know which device you're talking to. In case of USB you get the vendor and product id.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Returns a handle to a freshly initialized session </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>A pointer to an <a class="el" href="structestrella__session__t.html">estrella_session_t</a> which is to be initialized </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>dev</em>&nbsp;</td><td>Device to be used in this session</td></tr>
   </table>
 </dl>
@@ -432,14 +414,14 @@ ESTRNOMEM Couldn't create session due to lack of memory </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="a542fe97797b954a06fbbf195be9a773"></a><!-- doxytag: member="estrella.h::estrella_close" ref="a542fe97797b954a06fbbf195be9a773" args="(estrella_session_handle_t session)" -->
+<a class="anchor" name="d84f7aaad7e80a6e8ba366f2972e1305"></a><!-- doxytag: member="estrella.h::estrella_close" ref="d84f7aaad7e80a6e8ba366f2972e1305" args="(estrella_session_t *session)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int estrella_close           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
@@ -462,14 +444,14 @@ ESTRERR Session could not be destroyed </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="a169b1c4a06a4df7f2532b63eb04c0a7"></a><!-- doxytag: member="estrella.h::estrella_rate" ref="a169b1c4a06a4df7f2532b63eb04c0a7" args="(estrella_session_handle_t session, int rate, estr_xtrate_t xtrate)" -->
+<a class="anchor" name="f6c99a18f9e4f10cbbeb10581c3b3c88"></a><!-- doxytag: member="estrella.h::estrella_rate" ref="f6c99a18f9e4f10cbbeb10581c3b3c88" args="(estrella_session_t *session, int rate, estr_xtrate_t xtrate)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int estrella_rate           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -508,14 +490,14 @@ ESTRERR Could not set rate </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="4e8af384e4901640a6fa54f713a70d2a"></a><!-- doxytag: member="estrella.h::estrella_mode" ref="4e8af384e4901640a6fa54f713a70d2a" args="(estrella_session_handle_t session, estr_xtmode_t xtmode)" -->
+<a class="anchor" name="2646d00473f09899c738eeb49a26d4bd"></a><!-- doxytag: member="estrella.h::estrella_mode" ref="2646d00473f09899c738eeb49a26d4bd" args="(estrella_session_t *session, estr_xtmode_t xtmode)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int estrella_mode           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -535,7 +517,7 @@ ESTRERR Could not set rate </dd></dl>
 
 <p>
 Set the mode of operation<p>
-In normal operation mode <a class="el" href="estrella_8h.html#0be929e5d969ca085921bbff8da5de84">estrella_scan()</a> will return ESTRTIMEOUT if it does not receive any reply from the spectrometer device in time. When controlling operations using a trigger input estrella will wait until it receives any data, no matter how long that might take.<p>
+In normal operation mode <a class="el" href="estrella_8h.html#b59e11b58f809ce477bb57020a24c8bd">estrella_scan()</a> will return ESTRTIMEOUT if it does not receive any reply from the spectrometer device in time. When controlling operations using a trigger input estrella will wait until it receives any data, no matter how long that might take.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session </td></tr>
@@ -547,14 +529,14 @@ ESTRINV A supplied input argument is invalid </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="0be929e5d969ca085921bbff8da5de84"></a><!-- doxytag: member="estrella.h::estrella_scan" ref="0be929e5d969ca085921bbff8da5de84" args="(estrella_session_handle_t session, float *buffer)" -->
+<a class="anchor" name="b59e11b58f809ce477bb57020a24c8bd"></a><!-- doxytag: member="estrella.h::estrella_scan" ref="b59e11b58f809ce477bb57020a24c8bd" args="(estrella_session_t *session, float *buffer)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int estrella_scan           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -587,14 +569,14 @@ ESTRERR Scan failed </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="cc416d2cb0eecb264ccfbf66721f777f"></a><!-- doxytag: member="estrella.h::estrella_update" ref="cc416d2cb0eecb264ccfbf66721f777f" args="(estrella_session_handle_t session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp)" -->
+<a class="anchor" name="ca45e90b2f8a4af30b4e2c58e0aff809"></a><!-- doxytag: member="estrella.h::estrella_update" ref="ca45e90b2f8a4af30b4e2c58e0aff809" args="(estrella_session_t *session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int estrella_update           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="estrella_8h.html#9e32a165a0a3e6f6d73703996069c045">estrella_session_handle_t</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
         </tr>
         <tr>
@@ -639,7 +621,7 @@ ESTRINV A supplied input argument is invalid </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Mar 13 17:50:56 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 24 20:44:35 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

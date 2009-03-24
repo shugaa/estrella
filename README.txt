@@ -5,8 +5,7 @@ written with Linux as a target OS in mind but porting to any libusb supported
 platform should be easy. If it takes any effort at all.
 
 Estrella can only handle USB devices at the moment but should be easily
-extensible to drive LPT connected equipment. Provided the LPT communications
-protocol is known of course.
+extensible to drive IEEE-1284 connected equipment.
 
 For documentation have a look at the 'doc' directory. The provided sample
 application in 'test' should give you a pretty good idea of how things work. The

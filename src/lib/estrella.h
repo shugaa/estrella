@@ -134,10 +134,24 @@ typedef struct {
     } spec;
 } estrella_dev_t;
 
-/** Session handle.
+/** Session type.
  *
- * Used by the client to identify his session. */
-typedef int estrella_session_handle_t;
+ * A session is always associated with a specifc device and holds pretty much
+ * all the necessary management information. */
+typedef struct {
+    int rate;
+    int scanstoavg;
+    estr_xtmode_t xtmode;
+    estr_xtrate_t xtrate;
+    estr_xsmooth_t xsmooth;
+    estr_tempcomp_t tempcomp;
+
+    estrella_dev_t dev;
+    union {
+        struct usb_dev_handle *usb_dev_handle; 
+        /* Add your LPT handle here */
+    } spec;
+} estrella_session_t;
 
 /* ######################################################################### */
 /*                           Public interface                                */
@@ -180,7 +194,8 @@ int estrella_num_devices(int *num);
  * Like estrella_num_devices() this is just a convenience function. It calls
  * estrella_find_devices() under the hood and returns device 'num' from the list.
  *
- * @param dev           Pointer to an estrella_device_t struct
+ * @param dev           Pointer to an estrella_device_t struct which is to be
+ *                      populated with device information
  * @param num           The requested device number
  *
  * @return ESTROK       No errors occured
@@ -195,14 +210,15 @@ int estrella_get_device(estrella_dev_t *dev, int num);
  * implementation provides the advantage though that you actually know which
  * device you're talking to. In case of USB you get the vendor and product id.
  *
- * @param session       Returns a handle to a freshly initialized session
+ * @param session       A pointer to an estrella_session_t which is to be
+ *                      initialized
  * @param dev           Device to be used in this session
  *
  * @return ESTROK       No errors occured
  * @return ESTRERR      Could not create a session for this device
  * @return ESTRNOMEM    Couldn't create session due to lack of memory
  */
-int estrella_init(estrella_session_handle_t *session, estrella_dev_t *dev);
+int estrella_init(estrella_session_t *session, estrella_dev_t *dev);
 
 /** Destroy a session
  *
@@ -215,7 +231,7 @@ int estrella_init(estrella_session_handle_t *session, estrella_dev_t *dev);
  * @return ESTRINV      The supplied session handle is invalid
  * @return ESTRERR      Session could not be destroyed
  */
-int estrella_close(estrella_session_handle_t session);
+int estrella_close(estrella_session_t *session);
 
 /** Set integration time and timing resolution clock rate
  *
@@ -227,7 +243,7 @@ int estrella_close(estrella_session_handle_t session);
  * @return ESTRINV      A supplied input argument is invalid
  * @return ESTRERR      Could not set rate
  */
-int estrella_rate(estrella_session_handle_t session, int rate, estr_xtrate_t xtrate);
+int estrella_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate);
 
 /** Set the mode of operation
  *
@@ -242,7 +258,7 @@ int estrella_rate(estrella_session_handle_t session, int rate, estr_xtrate_t xtr
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
  */
-int estrella_mode(estrella_session_handle_t session, estr_xtmode_t xtmode);
+int estrella_mode(estrella_session_t *session, estr_xtmode_t xtmode);
 
 /** Acquire a spectral scan
  *
@@ -254,7 +270,7 @@ int estrella_mode(estrella_session_handle_t session, estr_xtmode_t xtmode);
  * @return ESTRTIMEOUT  Scan timed out (in normal operations mode)
  * @return ESTRERR      Scan failed
  */
-int estrella_scan(estrella_session_handle_t session, float *buffer);
+int estrella_scan(estrella_session_t *session, float *buffer);
 
 /** Set data processing configuration
  *
@@ -268,7 +284,7 @@ int estrella_scan(estrella_session_handle_t session, float *buffer);
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
  */
-int estrella_update(estrella_session_handle_t session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp);
+int estrella_update(estrella_session_t *session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp);
 
 #endif /* _ESTRELLA_H */
 

@@ -2,12 +2,13 @@ Here's some instructions on how to build and install estrella.
 
 1. Install libdll
 
-    Estrella uses libdll for some of it's device and session management. You
-    need to install libdll before proceeding to install estrella.
+    Estrella uses libdll (a tiny doubly linked list library) for most of it's
+    device management. You need to install libdll before proceeding to install
+    estrella.
 
     libdll can be obtained from http://github.com/bjoernr/libdll
 
-2. Make sure you have libusb (libusb.sourceforge.net) installed
+2. Make sure you have libusb (libusb.sourceforge.net) installed, too
 
 3. Create Makefiles (cmake needed)
     

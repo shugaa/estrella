@@ -45,47 +45,13 @@
 /*                            Types & Defines                                */
 /* ######################################################################### */
 
-#define FLAG_SESSINIT           (1<<0)
-
 /* ######################################################################### */
 /*                           Private interface (Module)                      */
 /* ######################################################################### */
-int prv_find_session(estrella_session_handle_t session, estrella_session_t **psession);
 
 /* ######################################################################### */
 /*                           Implementation                                  */
 /* ######################################################################### */
-
-static dll_list_t sessions;
-static int flags = 0;
-
-int prv_find_session(estrella_session_handle_t session, estrella_session_t **psession)
-{
-    dll_iterator_t it;
-    void *tmpsession = NULL;
-    unsigned char found = 0;
-
-    if (!psession)
-        return ESTRINV;
-
-    /* Try to find a session with the given handle */
-    dll_iterator_new(&it, &sessions);
-    while (dll_iterator_next(&it, &tmpsession) == EDLLOK) {
-        if (((estrella_session_t*)tmpsession)->handle == session) {
-            found = 1;
-            break;
-        }
-    }
-    dll_iterator_free(&it);
-
-    /* Return the found session */
-    if (found > 0) {
-        *psession = tmpsession;
-        return ESTROK;
-    }
-
-    return ESTRERR;
-}
 
 int estrella_find_devices(dll_list_t *devices)
 {
@@ -175,188 +141,122 @@ if (rc != EDLLOK) {
     return ESTROK;
 }
 
-int estrella_init(estrella_session_handle_t *session, estrella_dev_t *dev)
+int estrella_init(estrella_session_t *session, estrella_dev_t *dev)
 {
     int rc;
-    void *tmpsession = NULL;
-    estrella_session_t *newsession = NULL;
-    estrella_session_handle_t newhandle;
-    dll_iterator_t it;
 
-    /* Somebody wants to open a new session. So first of all we need to check
-     * wheter we need to initialize our session store or if this has happened
-     * already. */
-    if ((flags & FLAG_SESSINIT) == 0) {
-        dll_init();
-        dll_new(&sessions);
-        flags |= FLAG_SESSINIT;
-    }
+    if (!session)
+        return ESTRINV;
 
-    /* Find a session handle that we can use */
-    newhandle = 0;
-    dll_iterator_new(&it, &sessions);
-    while (dll_iterator_next(&it, &tmpsession) == EDLLOK) {
-        if (((estrella_session_t*)tmpsession)->handle >= newhandle)
-            newhandle = ((estrella_session_t*)tmpsession)->handle + 1;
-    }
-    dll_iterator_free(&it);
+    if (!dev)
+        return ESTRINV;
 
-    /* Create a new session */
-    rc = dll_append(&sessions, &tmpsession, sizeof(estrella_session_t));
-    if (rc != EDLLOK)
-        return ESTRNOMEM;
-
-    /* The tmpsession newsession stuff is necessary in order not to break gcc's
-     * strict aliasing rules if enabled */
-    newsession = (estrella_session_t*)tmpsession;
-    newsession->handle = newhandle;
-    memcpy(&(newsession->dev), dev, sizeof(estrella_dev_t));
+    memcpy(&(session->dev), dev, sizeof(estrella_dev_t));
 
     /* Initialize device and session here */
-    if (dev->devicetype == ESTRELLA_DEV_USB) 
-        rc = estrella_usb_init(newsession, dev);
+    if (dev->devicetype == ESTRELLA_DEV_USB)
+        rc = estrella_usb_init(session, dev);
 
     if (rc != ESTROK)
         return ESTRERR;
 
     /* These should be the default settings */
-    newsession->xtrate = ESTR_XRES_HIGH;
-    newsession->rate = 18;
-    newsession->scanstoavg = 1;
-    newsession->xsmooth = ESTR_XSMOOTH_NONE;
-    newsession->tempcomp = ESTR_TEMPCOMP_OFF;
-    newsession->xtmode = ESTR_XTMODE_NORMAL;
-
-    /* Return a handle to the new session */
-    *session = newhandle;
+    session->xtrate = ESTR_XRES_HIGH;
+    session->rate = 18;
+    session->scanstoavg = 1;
+    session->xsmooth = ESTR_XSMOOTH_NONE;
+    session->tempcomp = ESTR_TEMPCOMP_OFF;
+    session->xtmode = ESTR_XTMODE_NORMAL;
 
     return ESTROK;
 }
 
-int estrella_close(estrella_session_handle_t session)
+int estrella_close(estrella_session_t *session)
 {
     int rc;
-    void *tmpsession = NULL;
-    dll_iterator_t it;
     unsigned int numsessions;
-    unsigned char found = 0;
     int i;
 
     /* Some very basic sanity checking */
-    if ((flags & FLAG_SESSINIT) == 0)
+    if (!session)
         return ESTRINV;
     
-    /* Find the session referenced by the given handle */
-    i = 0;
-    dll_iterator_new(&it, &sessions);
-    while (dll_iterator_next(&it, &tmpsession) == EDLLOK) {
-        if (((estrella_session_t*)tmpsession)->handle == session) {
-            found = 1;    
-            break;
-        }
-
-        i++;
-    }
-    dll_iterator_free(&it); 
-
-    if (found < 1)
-        return ESTRINV;
-
     /* Detach this session's device */
-    if (((estrella_session_t*)tmpsession)->dev.devicetype == ESTRELLA_DEV_USB)
-        estrella_usb_close((estrella_session_t*)tmpsession);
+    if (session->dev.devicetype == ESTRELLA_DEV_USB)
+        rc = estrella_usb_close(session);
+    else 
+        rc = ESTROK;
 
-    /* Destroy the session */
-    rc = dll_remove(&sessions, i);
-    if (rc != EDLLOK)
+    if (rc != ESTROK)
         return ESTRERR;
-
-    /* Check if this was the last session. If so we might as well destroy our
-     * session store */
-    rc = dll_count(&sessions, &numsessions);
-    if (rc != EDLLOK)
-        return ESTRERR;
-
-    if (numsessions == 0) {
-        dll_free(&sessions);
-        flags &= ~FLAG_SESSINIT;
-    }
 
     return ESTROK;
 }
 
-int estrella_mode(estrella_session_handle_t session, estr_xtmode_t xtmode)
+int estrella_mode(estrella_session_t *session, estr_xtmode_t xtmode)
 {
     int rc;
-    estrella_session_t *psession = NULL;
 
-    /* Find the session referenced by the supplied handle */
-    rc = prv_find_session(session, &psession);
-    if (rc != ESTROK)
+    if (!session)
         return ESTRINV;
 
     if ((xtmode >= ESTR_XTMODE_TYPES) || (xtmode < 0))
         return ESTRINV;
 
-    psession->xtmode = xtmode;
+    session->xtmode = xtmode;
 
     return ESTROK;
 }
 
-int estrella_rate(estrella_session_handle_t session, int rate, estr_xtrate_t xtrate)
+int estrella_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate)
 {
     int rc;
-    estrella_session_t *psession = NULL;
 
-    /* Find the session referenced by the supplied handle */
-    rc = prv_find_session(session, &psession);
-    if (rc != ESTROK)
+    if (!session)
         return ESTRINV;
 
     /* Check xtrate parameter validity */
     if ((xtrate >= ESTR_XRES_TYPES) || (xtrate < 0))
         return ESTRINV;
 
-    /* We can not go lower than 2 ms and not longer than 65500 */
+    /* We can not go lower than 2 ms (at least the device I got can't, other's
+     * obviously can) and not longer than 65500 */
     if ((rate < 2) || (rate > 65500))
         return ESTRINV;
 
     /* Talk to the device and set the rate. In the original driver xtrate only
      * get's set when you set the rate. So we have created a compound command
      * here which makes sure the device knows about rate and xtrate at any time. */
-    if (psession->dev.devicetype == ESTRELLA_DEV_USB)
-        rc = estrella_usb_rate(psession, rate, xtrate);
+    if (session->dev.devicetype == ESTRELLA_DEV_USB)
+        rc = estrella_usb_rate(session, rate, xtrate);
     else
-        rc = 0;
+        rc = ESTROK;
 
     if (rc != ESTROK)
         return ESTRERR;
 
     /* Save the parameters */
-    psession->rate = rate;
-    psession->xtrate = xtrate;
+    session->rate = rate;
+    session->xtrate = xtrate;
 
     return ESTROK;
 }
 
-int estrella_scan(estrella_session_handle_t session, float *buffer)
+int estrella_scan(estrella_session_t *session, float *buffer)
 {
     int rc, i;
-    estrella_session_t *psession = NULL;
     float tmpbuf[2051];
 
     /* TODO: xsmooth and tempcomp still need to be implemented */
 
+    if (!session)
+        return ESTRINV;
+
     if (!buffer)
         return ESTRINV;
 
-    /* Find the session referenced by the supplied handle */
-    rc = prv_find_session(session, &psession);
-    if (rc != ESTROK)
-        return ESTRINV;
-
     /* Start a scan */
-    for (i=0;i<psession->scanstoavg;i++) {
+    for (i=0;i<session->scanstoavg;i++) {
         int j;
         float *mybuf;
 
@@ -367,9 +267,8 @@ int estrella_scan(estrella_session_handle_t session, float *buffer)
         else
             mybuf = tmpbuf;
 
-
-        if (psession->dev.devicetype == ESTRELLA_DEV_USB)
-            rc = estrella_usb_scan(psession, mybuf);
+        if (session->dev.devicetype == ESTRELLA_DEV_USB)
+            rc = estrella_usb_scan(session, mybuf);
         else
             rc = ESTROK;
 
@@ -395,24 +294,22 @@ int estrella_scan(estrella_session_handle_t session, float *buffer)
 
     /* Now check if we need to average or not. This is not necessary if there
      * was only one scan to perform anyway. */
-    if (psession->scanstoavg > 1)
+    if (session->scanstoavg > 1)
         for (i=0;i<2051;i++)
-            buffer[i] =  buffer[i]/(float)psession->scanstoavg;
+            buffer[i] =  buffer[i]/(float)session->scanstoavg;
 
     return ESTROK;
 }
 
-int estrella_update(estrella_session_handle_t session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp)
+int estrella_update(estrella_session_t *session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp)
 {
     int rc;
     estrella_session_t *psession = NULL;
 
-    /* Find the session referenced by the supplied handle */
-    rc = prv_find_session(session, &psession);
-    if (rc != ESTROK)
+    /* Check validity of input parameters */
+    if (!session)
         return ESTRINV;
 
-    /* Check validity of input parameters */
     if ((scanstoavg > 99) || (scanstoavg < 1))
         return ESTRINV;
     
@@ -423,9 +320,9 @@ int estrella_update(estrella_session_handle_t session, int scanstoavg, estr_xsmo
         return ESTRINV;
 
     /* Set the new parameters */
-    psession->scanstoavg = scanstoavg;
-    psession->xsmooth = xsmooth;
-    psession->tempcomp = tempcomp;
+    session->scanstoavg = scanstoavg;
+    session->xsmooth = xsmooth;
+    session->tempcomp = tempcomp;
 
     return ESTROK;
 }
