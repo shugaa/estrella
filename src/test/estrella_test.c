@@ -57,21 +57,21 @@ int main(int argc, char *argv[])
     rc = estrella_find_devices(&devices);
     if (rc != 0) {
         printf("Unable to search for usb devices\n");
-        dll_free(&devices);
+        dll_clear(&devices);
         return 1;
     }
    
     rc = dll_count(&devices, &numdevices);
     if ((rc != EDLLOK) || (numdevices == 0)) {
         printf("No devices found\n");
-        dll_free(&devices);
+        dll_clear(&devices);
         return 1;
     }
 
     /* get the first of the found devices. */
     rc = dll_get(&devices, &device, 0);
     if (rc != EDLLOK) {
-        dll_free(&devices);
+        dll_clear(&devices);
         return 1;
     }
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     if (rc != 0) {
         printf("Unable to create session\n");
         estrella_close(&esession);
-        dll_free(&devices);
+        dll_clear(&devices);
         return 1;
     }
 
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     if (rc != 0) {
         printf("Unable to set data processing configuration\n");
         estrella_close(&esession);
-        dll_free(&devices);
+        dll_clear(&devices);
         return 1;
     }
 
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     if (rc != 0) {
         printf("Unable to set rate\n");
         estrella_close(&esession);
-        dll_free(&devices);
+        dll_clear(&devices);
         return 1;
     }
 
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
     if (rc != ESTROK) {
         printf("Unable to scan\n");
         estrella_close(&esession);
-        dll_free(&devices);
+        dll_clear(&devices);
         return 1;
     }
 
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 #endif
 
     estrella_close(&esession);
-    dll_free(&devices);
+    dll_clear(&devices);
 
     return 0;
 }

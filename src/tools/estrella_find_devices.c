@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     }
     dll_iterator_free(&it);
 
-    dll_free(&devices);
+    dll_clear(&devices);
 
     return 0;
 }
