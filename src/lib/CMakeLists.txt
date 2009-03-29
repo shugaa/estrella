@@ -46,4 +46,4 @@ install(TARGETS estrella
 #    FILES_MATCHING REGEX "dll_([^_]+).h")
 
 # Instead just install the needed header files "manually"
-install(FILES estrella.h DESTINATION include/estrella)
+install(FILES estrella.h DESTINATION include/)
