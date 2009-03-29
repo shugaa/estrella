@@ -156,6 +156,8 @@ int estrella_init(estrella_session_t *session, estrella_dev_t *dev)
     /* Initialize device and session here */
     if (dev->devicetype == ESTRELLA_DEV_USB)
         rc = estrella_usb_init(session, dev);
+    else
+        rc = ESTROK;
 
     if (rc != ESTROK)
         return ESTRERR;
@@ -174,8 +176,6 @@ int estrella_init(estrella_session_t *session, estrella_dev_t *dev)
 int estrella_close(estrella_session_t *session)
 {
     int rc;
-    unsigned int numsessions;
-    int i;
 
     /* Some very basic sanity checking */
     if (!session)
@@ -195,8 +195,6 @@ int estrella_close(estrella_session_t *session)
 
 int estrella_mode(estrella_session_t *session, estr_xtmode_t xtmode)
 {
-    int rc;
-
     if (!session)
         return ESTRINV;
 
@@ -255,6 +253,8 @@ int estrella_scan(estrella_session_t *session, float *buffer)
     if (!buffer)
         return ESTRINV;
 
+    rc = ESTROK;
+
     /* Start a scan */
     for (i=0;i<session->scanstoavg;i++) {
         int j;
@@ -303,9 +303,6 @@ int estrella_scan(estrella_session_t *session, float *buffer)
 
 int estrella_update(estrella_session_t *session, int scanstoavg, estr_xsmooth_t xsmooth, estr_tempcomp_t tempcomp)
 {
-    int rc;
-    estrella_session_t *psession = NULL;
-
     /* Check validity of input parameters */
     if (!session)
         return ESTRINV;

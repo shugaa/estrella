@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    rc = estrella_rate(&esession, 20, ESTR_XRES_LOW);
+    rc = estrella_rate(&esession, 15, ESTR_XRES_LOW);
     if (rc != 0) {
         printf("Unable to set rate\n");
         estrella_close(&esession);
@@ -103,14 +103,17 @@ int main(int argc, char *argv[])
     clock_gettime(CLOCK_MONOTONIC, &tp1);
 #endif
 
-    for(i=0;i<2000;i++) 
+    for(i=0;i<1;i++) {
         rc = estrella_scan(&esession, buffer);
+        if (rc != ESTROK)
+            break;
+    }
 
 #ifdef ESTRELLA_TEST_TIMING
     clock_gettime(CLOCK_MONOTONIC, &tp2);
 #endif
 
-    if (rc != 0) {
+    if (rc != ESTROK) {
         printf("Unable to scan\n");
         estrella_close(&esession);
         dll_free(&devices);
@@ -124,8 +127,10 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef ESTRELLA_TEST_RESULT
-    for (i=0;i<2000;i++)
-        printf("item %d: %f\n", i, buffer[i]);
+    printf("[");
+    for (i=0;i<2051;i++)
+        printf("%f,\n", buffer[i]);
+    printf("]\n");
 #endif
 
     estrella_close(&esession);

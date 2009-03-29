@@ -29,6 +29,7 @@
 #ifndef _ESTRELLA_PRIVATE_H
 #define _ESTRELLA_PRIVATE_H
 
+#include <sys/time.h>
 #include "estrella.h"
 
 /* ######################################################################### */

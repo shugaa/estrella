@@ -42,8 +42,8 @@ install(TARGETS estrella
 # Requires CMAKE 2.6, so we won't be using it for now although it makes stuff a
 # little bit simpler
 #install(DIRECTORY . 
-#    DESTINATION include/dll
+#    DESTINATION include/estrella
 #    FILES_MATCHING REGEX "dll_([^_]+).h")
 
 # Instead just install the needed header files "manually"
-install(FILES estrella.h DESTINATION include/dll)
+install(FILES estrella.h DESTINATION include/estrella)
