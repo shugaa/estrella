@@ -60,10 +60,17 @@ int prv_usb_preup(void);
 int prv_usb_upload_firmware(struct usb_device *dev);
 int prv_usb_find_devices(dll_list_t *devices);
 int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle);
+int prv_usb_device_info(struct usb_device *dev, estrella_dev_t *device);
 
 /* ######################################################################### */
 /*                           Implementation                                  */
 /* ######################################################################### */
+
+/* To upload the firmware to the usb devices we pretty much just roll back the
+ * sniffed transactions from the windows driver. These are the necessary
+ * requests. */
+extern estrella_usb_request_t usb_preup_req[];
+extern size_t usb_preup_req_size;
 
 /* These are the uninitialized usb devices on the bus. */
 static struct usb_ident usb_devices_preup[] = {
@@ -75,11 +82,53 @@ static struct usb_ident usb_devices[] = {
     {0x0bd7,0xa012},
 };
 
-/* To upload the firmware to the usb devices we pretty much just roll back the
- * sniffed transactions from the windows driver. These are the necessary
- * requests. */
-extern estrella_usb_request_t usb_preup_req[];
-extern size_t usb_preup_req_size;
+int prv_usb_device_info(struct usb_device *dev, estrella_dev_t *device)
+{
+    int rc;
+    unsigned char buf[18];
+    struct usb_dev_handle *usb_handle = NULL;
+
+    usb_handle = usb_open(dev);
+    if (!usb_handle)
+        return ESTRERR;
+
+    rc = usb_get_descriptor(usb_handle, 0x01, 0x00, (void*)buf, sizeof(buf));
+    if (rc < 0) {
+        usb_close(usb_handle);
+        return ESTRERR;
+    }
+
+    /* Set product and vendor id */
+    device->spec.usb.vendorid = (unsigned short)buf[11];
+    device->spec.usb.vendorid = device->spec.usb.vendorid << 8;
+    device->spec.usb.vendorid |= (unsigned short)buf[10];
+
+    device->spec.usb.productid = (unsigned short)buf[9];
+    device->spec.usb.productid = device->spec.usb.productid << 8;
+    device->spec.usb.productid |= (unsigned short)buf[8];
+
+    /* Set manufacturer/product/serial number strings */
+    rc = usb_get_string_simple(usb_handle, (int)buf[14], device->spec.usb.manufacturer, sizeof(device->spec.usb.manufacturer));
+    if (rc < 0) {
+        usb_close(usb_handle);
+        return ESTRERR;
+    }
+    rc = usb_get_string_simple(usb_handle, (int)buf[15], device->spec.usb.product, sizeof(device->spec.usb.product));
+    if (rc < 0) {
+        usb_close(usb_handle);
+        return ESTRERR;
+    }
+
+    /* We don't get a serial number usually so a failure here is not lethal */
+    rc = usb_get_string_simple(usb_handle, (int)buf[16], device->spec.usb.serialnumber, sizeof(device->spec.usb.serialnumber));
+    if (rc < 0) {
+        strncpy(device->spec.usb.serialnumber, "?", sizeof(device->spec.usb.serialnumber));
+    }
+
+    usb_close(usb_handle);
+
+    return ESTROK;
+}
 
 int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle)
 {
@@ -213,15 +262,24 @@ int prv_usb_find_devices(dll_list_t *devices)
 
                     /* Create a new list entry for this device */
                     rc = dll_append(devices, &tmpdev, sizeof(estrella_dev_t));
-                    if (rc != EDLLOK)
+                    if (rc != EDLLOK) {
+                        dll_clear(devices);
                         return ESTRNOMEM;
+                    }
         
                     newdev = (estrella_dev_t*)tmpdev;
-
-                    /* And fill in the info */
+        
+                    /* Very basic device info */
                     newdev->devicetype = ESTRELLA_DEV_USB;
                     newdev->spec.usb.devnum = dev->devnum;
                     strncpy(newdev->spec.usb.bus, usb_bus->dirname, ESTRELLA_PATH_MAX);
+
+                    /* Add some additional info from the device descriptor */
+                    rc = prv_usb_device_info(dev, newdev);
+                    if (rc != ESTROK) {
+                        dll_clear(devices);
+                        return ESTRERR;
+                    }
                 }
             }
         }

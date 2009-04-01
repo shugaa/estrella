@@ -120,6 +120,13 @@ typedef enum {
 typedef struct {
     char bus[ESTRELLA_PATH_MAX];
     unsigned char devnum;
+
+    unsigned short vendorid;
+    unsigned short productid;
+
+    char manufacturer[128];
+    char product[128];
+    char serialnumber[32];
 } estrella_usbdev_t;
 
 /** Generic device information.

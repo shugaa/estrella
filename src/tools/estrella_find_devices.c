@@ -63,9 +63,15 @@ int main(int argc, char *argv[])
 
         switch (dev->devicetype) {
             case ESTRELLA_DEV_USB:
-                printf("   type:    USB\n");
-                printf("   bus:     %s\n", dev->spec.usb.bus);
-                printf("   device:  %d\n", dev->spec.usb.devnum);
+                printf("   type:         USB\n");
+                printf("   bus:          %s\n", dev->spec.usb.bus);
+                printf("   device:       %d\n", dev->spec.usb.devnum);
+                printf("   vendor id:    0x%04x\n", dev->spec.usb.vendorid);
+                printf("   product id:   0x%04x\n", dev->spec.usb.productid);
+                printf("   manufacturer: %s\n", dev->spec.usb.manufacturer);
+                printf("   product:      %s\n", dev->spec.usb.product);
+                printf("   serial:       %s\n", dev->spec.usb.serialnumber);
+
 
                 break;
             default:
