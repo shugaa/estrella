@@ -72,8 +72,8 @@ typedef struct
  *
  * TODO: I have a bit of a bad feeling about pushing this firmware to every
  * cypress chip around. Other manufacturers are eventually using the same IC and
- * bad things will happen if we throw a wrong firmware at it. Correct me if I'm
- * wrong. 
+ * bad things will happen if we throw a wrong firmware at it. Don't know if we
+ * could work with serial number or something. 
  *
  * So maybe it would be a better idea to provide a simple EPP2000 firmware
  * loading tool. The user could then decide on his own to load firmware to

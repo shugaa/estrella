@@ -51,8 +51,8 @@ int estrella_usleep(unsigned long us, unsigned long *rem)
     struct timespec req;
     UNUSED(rem);
 
-    req.tv_sec = us/1000;
-    req.tv_nsec = (us%1000)*1000;
+    req.tv_sec = us/(1000*1000);
+    req.tv_nsec = (us%(1000*1000))*1000;
 
     rc = nanosleep(&req, NULL);
     if (rc != 0)

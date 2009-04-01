@@ -40,8 +40,12 @@
 /*                            Types & Defines                                */
 /* ######################################################################### */
 
-/* When a scan takes (rate + PRV_DELAY) we consider it a timeout */
-#define PRV_DELAY       (100)
+/* When a scan takes (rate + PRV_DELAY)ms we consider it a timeout */
+#define PRV_DELAY           (100)
+
+/* This is how long we wait (ms) for devices to reenumerate after firmware
+ * upload */
+#define PRV_WAITFORDEVICE   (2000)
 
 struct usb_ident {
     int id_vendor;
@@ -61,9 +65,7 @@ int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle);
 /*                           Implementation                                  */
 /* ######################################################################### */
 
-/* These are the uninitialized usb devices on the bus. The problem I see here is
- * that this chip eventually sits in a number of different devices and we're
- * putting bad firmware on it. */
+/* These are the uninitialized usb devices on the bus. */
 static struct usb_ident usb_devices_preup[] = {
     {0x04b4,0x8613},    
 };
@@ -243,8 +245,10 @@ int estrella_usb_find_devices(dll_list_t *devices)
         return ESTRERR;
 
     /* We need to wait a little for all the devices to reenumerate and show up
-     * on the bus. */
-    sleep(2);
+     * on the bus. This is not particularly nice but I don't really know what
+     * else to do... apart from polling all busses for reenumerated devices
+     * maybe */
+    estrella_usleep(PRV_WAITFORDEVICE*1000, NULL);
 
     /* Correctly initialized devices now show up on the bus with a different
      * vendor/product ID. We're now going to search for those and return them */
@@ -324,7 +328,8 @@ int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrat
      * integration time. From what I can see from the sniffed windows driver log
      * data[0] and data[1] hold the integration time in milliseconds. If this 
      * value is >= 5 then data[3] is decremented by 1 to 0x1f. Also we obviously 
-     * can't supply values <= 1. So, 2 ms integration time is the minimum. */
+     * can't supply values <= 1 (on _my_ device, it's supposed to work on
+     * others). So, 2 ms integration time is the minimum. */
     unsigned char estrella_rate_req_data[] = {0x00,0x00,0x04,0x20,0xe0,0x40}; 
     estrella_usb_request_t usb_rate_req = {
         0x00,
@@ -498,8 +503,7 @@ int estrella_usb_scan(estrella_session_t *session, float *buffer)
      * Leave out the first value from the result set, which leaves us with 2047
      * items. Those values are put into the result buffer from 0 to 2046. The
      * remaining indices 2047 to 2050 are simply set to 0.
-     * Also I don't know why it has to be a float buffer. All we're getting is
-     * 16 bit integer values. */
+     * No idea why it has to be a float buffer in the first place but well... */
     for (i=2; i<4096;i+=2) {
         unsigned short val = 0;
         val |= scanbuf[i+1];

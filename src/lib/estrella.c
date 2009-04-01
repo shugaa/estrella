@@ -36,11 +36,6 @@
 /*                            TODO / Notes                                   */
 /* ######################################################################### */
 
-/* the estrella_init() as well as the estrella_close() function manipulate the
- * session store. So in order to make this library reentrant we should
- * eventually put some semaphores around that code which adds or deletes
- * elements. and manipulates global flags */
-
 /* ######################################################################### */
 /*                            Types & Defines                                */
 /* ######################################################################### */
@@ -119,7 +114,7 @@ int estrella_get_device(estrella_dev_t *dev, int num)
     }
 
     rc = dll_count(&devices, &listsize);
-if (rc != EDLLOK) {
+    if (rc != EDLLOK) {
         dll_clear(&devices);
         return ESTRERR;
     }

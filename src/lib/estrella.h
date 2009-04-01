@@ -39,8 +39,8 @@
  * supported platform should be easy. If it takes any effort at all.
  *
  * Estrella can only handle USB devices at the moment but should be easily
- * extensible to drive LPT connected equipment. Provided the LPT communications
- * protocol is known of course.
+ * extensible to drive LPT connected equipment. Provided the IEEE-1284
+ * communications protocol is known of course.
  * 
  * Feedback to bjoern@shugaa.de is always highly appreciated.
  */
@@ -63,7 +63,8 @@
 /*                            Types & Defines                                */
 /* ######################################################################### */
 
-#define ESTRELLA_PATH_MAX           (256)
+/* Maximum path string length */
+#define ESTRELLA_PATH_MAX   (256)
 
 /* Library error codes */
 #define ESTROK              (0) 
@@ -72,7 +73,7 @@
 #define ESTRNOMEM           (3)
 #define ESTRTIMEOUT         (4)
 
-/* NOTE: The *_TYPES entry must always be last */
+/* NOTE: The *_TYPES entry must always be last in the following enums. */
 
 /** Estrella operation modes */
 typedef enum {
@@ -110,8 +111,8 @@ typedef enum {
  *
  * Spectrometers may be connected to the computer through USB or the parallel
  * port. While at the moment this driver can only handle USB connected devices
- * ist should be fairly easy to implement LPT communications. Provided you know
- * about the protocol of course. */
+ * ist should be fairly easy to implement IEEE-1284 communications. Provided you
+ * know about the protocol being used. */
 typedef enum {
     ESTRELLA_DEV_USB,
     ESTRELLA_DEV_LPT,
@@ -130,7 +131,7 @@ typedef struct {
     estrella_devicetype_t devicetype;
     union {
         estrella_usbdev_t usb;
-        /* You might want to add LPT specifics here. */
+        /* Add IEEE-1284 specifics here. */
     } spec;
 } estrella_dev_t;
 
@@ -149,7 +150,7 @@ typedef struct {
     estrella_dev_t dev;
     union {
         struct usb_dev_handle *usb_dev_handle; 
-        /* Add your LPT handle here */
+        /* Add IEEE-1284 handle here */
     } spec;
 } estrella_session_t;
 
@@ -160,8 +161,8 @@ typedef struct {
 /** Find devices connected to the host
  *
  * If necessary initialization (namely firmware loading) is being performed
- * transparently. This function gives you a set of estrella_dev_t items, which
- * you can use to create sessions using estrella_init().
+ * transparently. This function gives us a set of estrella_dev_t items, which
+ * we can use to create sessions using estrella_init().
  *
  * Note that if no devices are found the returned list is empty but the function
  * call returns no errors.
@@ -178,8 +179,8 @@ int estrella_find_devices(dll_list_t *devices);
  *
  * This function basically just calls estrella_find_devices() and returns the
  * size of the list. It's provided for convenience in environments where it's
- * difficult to handle dll_list_t items (e.g. LabVIEW). In regular C/C++ code
- * you should be using estrella_find_devices() to minimize overhead.
+ * difficult to handle dll_list_t items. In regular C/C++ code we should be
+ * using estrella_find_devices() to minimize overhead.
  *
  * @param num           Returns the number of devices found
  *
@@ -206,9 +207,10 @@ int estrella_get_device(estrella_dev_t *dev, int num);
 
 /** Initialize a session on a device
  *
- * Session is pretty much what the original driver means with "channel". This
- * implementation provides the advantage though that you actually know which
- * device you're talking to. In case of USB you get the vendor and product id.
+ * 'Session' is pretty much what 'channel' is for the windows driver. At least
+ * in our case we can get some basic info about the device we're dealing with
+ * prior to binding it to a session. This is not the case for the windows driver
+ * I believe.
  *
  * @param session       A pointer to an estrella_session_t which is to be
  *                      initialized
@@ -222,8 +224,7 @@ int estrella_init(estrella_session_t *session, estrella_dev_t *dev);
 
 /** Destroy a session
  *
- * It's pretty much vital to call this function when you're done using a session.
- * All resources are being freed here.
+ * Be nice and destroy the session when we're done using it.
  *
  * @param session       Session to be destroyed
  *
@@ -237,7 +238,15 @@ int estrella_close(estrella_session_t *session);
  *
  * @param session       Session
  * @param rate          Detector integration rate in ms (2-65500)
- * @param xtrate        ESTR_XRES_LOW/MEDIUM/HIGH. ESTR_XRES_HIGH is the slowest but provides the highest resolution
+ * @param xtrate        ESTR_XRES_LOW/MEDIUM/HIGH. ESTR_XRES_HIGH is the slowest
+ *                      but provides the highest resolution.
+ *                      According to the manufacturer we should be using
+ *                      integration times >30ms when operating in medium or high
+ *                      resolution mode. In fact we should be fine with only
+ *                      15ms in normal resolution mode. 
+ *                      This has got to to with the clock slowdown in higher
+ *                      resolution modes and the way data is being pushed out of
+ *                      the ccd array. Have a look at the data sheet for details.
  *
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
@@ -250,7 +259,15 @@ int estrella_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate);
  * In normal operation mode estrella_scan() will return ESTRTIMEOUT if it does not
  * receive any reply from the spectrometer device in time. When controlling
  * operations using a trigger input estrella will wait until it receives any
- * data, no matter how long that might take.
+ * data from the device, no matter how long that might take.
+ *
+ * The manufacturer's documentation on this topic is rather sparse. This is what
+ * I know:
+ *  - Setting rate and xtrate works as usual
+ *  - The spectormeter triggers with the rising edge (TTL level)
+ *  - The trigger pulse's high slope should be no shorter than 1ms
+ *  - With every trigger pulse the spectrometer will start scanning and return
+ *    the results
  *
  * @param session       Session
  * @param xtmode        ESTR_XTMODE_NORMAL: Normal operation, ESTR_XTMODE_TRIGGER: External trigger
