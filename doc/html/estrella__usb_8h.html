@@ -95,7 +95,7 @@ Implements USB device communications <hr><h2>Function Documentation</h2>
 <p>
 Find USB devices<p>
 If necessary firmware upload and reenumeration is being performed transparently.<p>
-TODO: I have a bit of a bad feeling about pushing this firmware to every cypress chip around. Other manufacturers are eventually using the same IC and bad things will happen if we throw a wrong firmware at it. Correct me if I'm wrong.<p>
+TODO: I have a bit of a bad feeling about pushing this firmware to every cypress chip around. Other manufacturers are eventually using the same IC and bad things will happen if we throw a wrong firmware at it. Don't know if we could work with serial number or something.<p>
 So maybe it would be a better idea to provide a simple EPP2000 firmware loading tool. The user could then decide on his own to load firmware to /proc/bus/usb/foo/bar if he's sure it's a EPP2000 device.<p>
 Anyway, since the USB LPT adapter cable is the only cypress device on my USB bus I'll stick with the automatic firmware uploading for now.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -261,7 +261,7 @@ ESTRERR Scan failed </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 24 20:44:35 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 1 12:49:35 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

@@ -171,11 +171,11 @@ Public driver interface.
 <div class="memdoc">
 
 <p>
-Estrella operation modes <div class="fragment"><pre class="fragment"><a name="l00078"></a>00078              {
-<a name="l00079"></a>00079     ESTR_XTMODE_NORMAL    = (0),
-<a name="l00080"></a>00080     ESTR_XTMODE_TRIGGER,
-<a name="l00081"></a>00081     ESTR_XTMODE_TYPES,
-<a name="l00082"></a>00082 } <a class="code" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a>;
+Estrella operation modes <div class="fragment"><pre class="fragment"><a name="l00079"></a>00079              {
+<a name="l00080"></a>00080     ESTR_XTMODE_NORMAL    = (0),
+<a name="l00081"></a>00081     ESTR_XTMODE_TRIGGER,
+<a name="l00082"></a>00082     ESTR_XTMODE_TYPES,
+<a name="l00083"></a>00083 } <a class="code" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a>;
 </pre></div>
 <p>
 
@@ -193,14 +193,14 @@ Estrella operation modes <div class="fragment"><pre class="fragment"><a name="l0
 <div class="memdoc">
 
 <p>
-Estrella xsmoothing setting <div class="fragment"><pre class="fragment"><a name="l00085"></a>00085              {
-<a name="l00086"></a>00086     ESTR_XSMOOTH_NONE     = (0),
-<a name="l00087"></a>00087     ESTR_XSMOOTH_5PX,
-<a name="l00088"></a>00088     ESTR_XSMOOTH_9PX,
-<a name="l00089"></a>00089     ESTR_XSMOOTH_17PX,
-<a name="l00090"></a>00090     ESTR_XSMOOTH_33PX,
-<a name="l00091"></a>00091     ESTR_XSMOOTH_TYPES,
-<a name="l00092"></a>00092 } <a class="code" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a>;
+Estrella xsmoothing setting <div class="fragment"><pre class="fragment"><a name="l00086"></a>00086              {
+<a name="l00087"></a>00087     ESTR_XSMOOTH_NONE     = (0),
+<a name="l00088"></a>00088     ESTR_XSMOOTH_5PX,
+<a name="l00089"></a>00089     ESTR_XSMOOTH_9PX,
+<a name="l00090"></a>00090     ESTR_XSMOOTH_17PX,
+<a name="l00091"></a>00091     ESTR_XSMOOTH_33PX,
+<a name="l00092"></a>00092     ESTR_XSMOOTH_TYPES,
+<a name="l00093"></a>00093 } <a class="code" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a>;
 </pre></div>
 <p>
 
@@ -218,11 +218,11 @@ Estrella xsmoothing setting <div class="fragment"><pre class="fragment"><a name=
 <div class="memdoc">
 
 <p>
-Estrella temperature compensation <div class="fragment"><pre class="fragment"><a name="l00095"></a>00095              {
-<a name="l00096"></a>00096     ESTR_TEMPCOMP_OFF     = (0),
-<a name="l00097"></a>00097     ESTR_TEMPCOMP_ON,
-<a name="l00098"></a>00098     ESTR_TEMPCOMP_TYPES,
-<a name="l00099"></a>00099 } <a class="code" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a>;
+Estrella temperature compensation <div class="fragment"><pre class="fragment"><a name="l00096"></a>00096              {
+<a name="l00097"></a>00097     ESTR_TEMPCOMP_OFF     = (0),
+<a name="l00098"></a>00098     ESTR_TEMPCOMP_ON,
+<a name="l00099"></a>00099     ESTR_TEMPCOMP_TYPES,
+<a name="l00100"></a>00100 } <a class="code" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a>;
 </pre></div>
 <p>
 
@@ -240,12 +240,12 @@ Estrella temperature compensation <div class="fragment"><pre class="fragment"><a
 <div class="memdoc">
 
 <p>
-Xtiming resolution parameters <div class="fragment"><pre class="fragment"><a name="l00102"></a>00102              {
-<a name="l00103"></a>00103     ESTR_XRES_LOW         = (0),
-<a name="l00104"></a>00104     ESTR_XRES_MEDIUM,
-<a name="l00105"></a>00105     ESTR_XRES_HIGH,
-<a name="l00106"></a>00106     ESTR_XRES_TYPES,
-<a name="l00107"></a>00107 } <a class="code" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a>;
+Xtiming resolution parameters <div class="fragment"><pre class="fragment"><a name="l00103"></a>00103              {
+<a name="l00104"></a>00104     ESTR_XRES_LOW         = (0),
+<a name="l00105"></a>00105     ESTR_XRES_MEDIUM,
+<a name="l00106"></a>00106     ESTR_XRES_HIGH,
+<a name="l00107"></a>00107     ESTR_XRES_TYPES,
+<a name="l00108"></a>00108 } <a class="code" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a>;
 </pre></div>
 <p>
 
@@ -264,10 +264,10 @@ Xtiming resolution parameters <div class="fragment"><pre class="fragment"><a nam
 
 <p>
 Indicates the device type.<p>
-Spectrometers may be connected to the computer through USB or the parallel port. While at the moment this driver can only handle USB connected devices ist should be fairly easy to implement LPT communications. Provided you know about the protocol of course. <div class="fragment"><pre class="fragment"><a name="l00115"></a>00115              {
-<a name="l00116"></a>00116     ESTRELLA_DEV_USB,
-<a name="l00117"></a>00117     ESTRELLA_DEV_LPT,
-<a name="l00118"></a>00118 } <a class="code" href="estrella_8h.html#81b17e2fedb6029889e010cf4155042a">estrella_devicetype_t</a>;
+Spectrometers may be connected to the computer through USB or the parallel port. While at the moment this driver can only handle USB connected devices ist should be fairly easy to implement IEEE-1284 communications. Provided you know about the protocol being used. <div class="fragment"><pre class="fragment"><a name="l00116"></a>00116              {
+<a name="l00117"></a>00117     ESTRELLA_DEV_USB,
+<a name="l00118"></a>00118     ESTRELLA_DEV_LPT,
+<a name="l00119"></a>00119 } <a class="code" href="estrella_8h.html#81b17e2fedb6029889e010cf4155042a">estrella_devicetype_t</a>;
 </pre></div>
 <p>
 
@@ -292,7 +292,7 @@ Spectrometers may be connected to the computer through USB or the parallel port.
 
 <p>
 Find devices connected to the host<p>
-If necessary initialization (namely firmware loading) is being performed transparently. This function gives you a set of <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> items, which you can use to create sessions using <a class="el" href="estrella_8h.html#c2bea81643fac63eb0a821f70a123a40">estrella_init()</a>.<p>
+If necessary initialization (namely firmware loading) is being performed transparently. This function gives us a set of <a class="el" href="structestrella__dev__t.html">estrella_dev_t</a> items, which we can use to create sessions using <a class="el" href="estrella_8h.html#c2bea81643fac63eb0a821f70a123a40">estrella_init()</a>.<p>
 Note that if no devices are found the returned list is empty but the function call returns no errors.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -322,7 +322,7 @@ ESTRERR Device discovery failed </dd></dl>
 
 <p>
 Find out about the number of spectrometer devices in the system<p>
-This function basically just calls <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> and returns the size of the list. It's provided for convenience in environments where it's difficult to handle dll_list_t items (e.g. LabVIEW). In regular C/C++ code you should be using <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> to minimize overhead.<p>
+This function basically just calls <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> and returns the size of the list. It's provided for convenience in environments where it's difficult to handle dll_list_t items. In regular C/C++ code we should be using <a class="el" href="estrella_8h.html#58c73abcd3e073bb43e314fa66e7874b">estrella_find_devices()</a> to minimize overhead.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>num</em>&nbsp;</td><td>Returns the number of devices found</td></tr>
@@ -401,7 +401,7 @@ ESTRERR Device not found </dd></dl>
 
 <p>
 Initialize a session on a device<p>
-Session is pretty much what the original driver means with "channel". This implementation provides the advantage though that you actually know which device you're talking to. In case of USB you get the vendor and product id.<p>
+'Session' is pretty much what 'channel' is for the windows driver. At least in our case we can get some basic info about the device we're dealing with prior to binding it to a session. This is not the case for the windows driver I believe.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>A pointer to an <a class="el" href="structestrella__session__t.html">estrella_session_t</a> which is to be initialized </td></tr>
@@ -432,7 +432,7 @@ ESTRNOMEM Couldn't create session due to lack of memory </dd></dl>
 
 <p>
 Destroy a session<p>
-It's pretty much vital to call this function when you're done using a session. All resources are being freed here.<p>
+Be nice and destroy the session when we're done using it.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session to be destroyed</td></tr>
@@ -481,7 +481,7 @@ Set integration time and timing resolution clock rate<p>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>rate</em>&nbsp;</td><td>Detector integration rate in ms (2-65500) </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>xtrate</em>&nbsp;</td><td>ESTR_XRES_LOW/MEDIUM/HIGH. ESTR_XRES_HIGH is the slowest but provides the highest resolution</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>xtrate</em>&nbsp;</td><td>ESTR_XRES_LOW/MEDIUM/HIGH. ESTR_XRES_HIGH is the slowest but provides the highest resolution. According to the manufacturer we should be using integration times &gt;30ms when operating in medium or high resolution mode. In fact we should be fine with only 15ms in normal resolution mode. This has got to to with the clock slowdown in higher resolution modes and the way data is being pushed out of the ccd array. Have a look at the data sheet for details.</td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
@@ -517,7 +517,10 @@ ESTRERR Could not set rate </dd></dl>
 
 <p>
 Set the mode of operation<p>
-In normal operation mode <a class="el" href="estrella_8h.html#b59e11b58f809ce477bb57020a24c8bd">estrella_scan()</a> will return ESTRTIMEOUT if it does not receive any reply from the spectrometer device in time. When controlling operations using a trigger input estrella will wait until it receives any data, no matter how long that might take.<p>
+In normal operation mode <a class="el" href="estrella_8h.html#b59e11b58f809ce477bb57020a24c8bd">estrella_scan()</a> will return ESTRTIMEOUT if it does not receive any reply from the spectrometer device in time. When controlling operations using a trigger input estrella will wait until it receives any data from the device, no matter how long that might take.<p>
+The manufacturer's documentation on this topic is rather sparse. This is what I know:<ul>
+<li>Setting rate and xtrate works as usual</li><li>The spectormeter triggers with the rising edge (TTL level)</li><li>The trigger pulse's high slope should be no shorter than 1ms</li><li>With every trigger pulse the spectrometer will start scanning and return the results</li></ul>
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session </td></tr>
@@ -621,7 +624,7 @@ ESTRINV A supplied input argument is invalid </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 24 20:44:35 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 1 12:49:35 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>
