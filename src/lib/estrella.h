@@ -57,8 +57,6 @@
 /*                            TODO / Notes                                   */
 /* ######################################################################### */
 
-/* return value handling needs to be improved significantly */
-
 /* ######################################################################### */
 /*                            Types & Defines                                */
 /* ######################################################################### */
@@ -111,7 +109,7 @@ typedef enum {
  *
  * Spectrometers may be connected to the computer through USB or the parallel
  * port. While at the moment this driver can only handle USB connected devices
- * ist should be fairly easy to implement IEEE-1284 communications. Provided you
+ * ist should be fairly easy to implement IEEE-1284 communications. Provided ou
  * know about the protocol being used. */
 typedef enum {
     ESTRELLA_DEV_USB,
