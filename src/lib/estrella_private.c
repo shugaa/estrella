@@ -102,6 +102,26 @@ int estrella_timestamp_diffms(estr_timestamp_t *ts1, estr_timestamp_t *ts2, unsi
     return ESTROK;
 }
 
+int estrella_lock(estr_lock_t *lock)
+{
+    *((int*)lock) = 1;
+    return ESTROK;
+}
+
+int estrella_unlock(estr_lock_t *lock)
+{
+    *((int*)lock) = 0;
+    return ESTROK;
+}
+
+int estrella_islocked(estr_lock_t *lock)
+{
+    if (*((int*)lock) == 0)
+        return 0;
+    else
+        return 1;
+}
+
 void *estrella_malloc(size_t size)
 {
     return malloc(size);

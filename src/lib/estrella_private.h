@@ -83,6 +83,33 @@ int estrella_timestamp_get(estr_timestamp_t *ts);
  */
 int estrella_timestamp_diffms(estr_timestamp_t *ts1, estr_timestamp_t *ts2, unsigned long *diff);
 
+/** Close a lock
+ *
+ * @param lock          The lock to be locked
+ *
+ * @return ESTROK       Successfully locked
+ * @return ESTRERR      Unable to lock
+ */
+int estrella_lock(estr_lock_t *lock);
+
+/** Unlock a lock
+ *
+ * @param lock          The lock to be unlocked
+ *
+ * @return ESTROK       Successfully unlocked
+ * @return ESTRERR      Unable to unlock
+ */
+int estrella_unlock(estr_lock_t *lock);
+
+/** Check a lock
+ *
+ * @param lock          The lock to be checked
+ *
+ * @return 1            Locked
+ * @return 0            Not locked
+ */
+int estrella_islocked(estr_lock_t *lock);
+
 /** Allocate memory 
  *
  * @param size          Number of bytes to alloc

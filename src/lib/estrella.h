@@ -57,6 +57,15 @@
 /*                            TODO / Notes                                   */
 /* ######################################################################### */
 
+/* BR: Personally I would really like to hide most of the implementation details
+ * from the client. Most of all the contents of estrella sessions. Unfortunately
+ * this is not possible when sessions are supposed to be allocated client side
+ * as it is right now. The compiler needs to know the size of the session
+ * struct. The only way out would be to allocate sessions inside the library
+ * which eventually is a bit dangerous with regard to memory management. Yet
+ * another option would be to provide a fixed size session store in the lib but
+ * this would of course limit the number of sessions the user can create. */
+
 /* ######################################################################### */
 /*                            Types & Defines                                */
 /* ######################################################################### */
@@ -70,6 +79,13 @@
 #define ESTRINV             (2)
 #define ESTRNOMEM           (3)
 #define ESTRTIMEOUT         (4)
+#define ESTRNOTIMPL         (5)
+#define ESTRALREADY         (6)
+
+/* This is not a thread safe locking mechanism but for our simple purposes
+ * (locking sessions during async scans) it should be enough, at least for now
+ * and for my purposes;) */
+typedef int estr_lock_t;
 
 /* NOTE: The *_TYPES entry must always be last in the following enums. */
 
@@ -157,6 +173,9 @@ typedef struct {
         struct usb_dev_handle *usb_dev_handle; 
         /* Add IEEE-1284 handle here */
     } spec;
+
+    /* Used to lock sessions during asynchronous scannning operations */
+    estr_lock_t lock;
 } estrella_session_t;
 
 /* ######################################################################### */
@@ -224,6 +243,7 @@ int estrella_get_device(estrella_dev_t *dev, int num);
  * @return ESTROK       No errors occured
  * @return ESTRERR      Could not create a session for this device
  * @return ESTRNOMEM    Couldn't create session due to lack of memory
+ * @return ESTRNOTIMPL  Function has not been implemented for this device
  */
 int estrella_init(estrella_session_t *session, estrella_dev_t *dev);
 
@@ -236,6 +256,7 @@ int estrella_init(estrella_session_t *session, estrella_dev_t *dev);
  * @return ESTROK       No errors occured
  * @return ESTRINV      The supplied session handle is invalid
  * @return ESTRERR      Session could not be destroyed
+ * @return ESTRNOTIMPL  Function has not been implemented for this device
  */
 int estrella_close(estrella_session_t *session);
 
@@ -256,6 +277,7 @@ int estrella_close(estrella_session_t *session);
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
  * @return ESTRERR      Could not set rate
+ * @return ESTRNOTIMPL  Function has not been implemented for this device
  */
 int estrella_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate);
 
@@ -290,9 +312,49 @@ int estrella_mode(estrella_session_t *session, estr_xtmode_t xtmode);
  * @return ESTROK       No errors occured
  * @return ESTRINV      A supplied input argument is invalid
  * @return ESTRTIMEOUT  Scan timed out (in normal operations mode)
+ * @return ESTRNOTIMPL  Function has not been implemented for this device
  * @return ESTRERR      Scan failed
  */
 int estrella_scan(estrella_session_t *session, float *buffer);
+
+/** Acquire a spectral scan asynchronously
+ *
+ * estrella_async_scan() will just tell the spectrometer to start scanning but
+ * it won't wait for the results of the scan, thus not blocking the calling
+ * thread/process. Results can be fetched using estrella_async_result().
+ *
+ * This function won't do any averaging over multiple scans obviously, neither
+ * does estrella_async_result(). You will either have to use the compound
+ * estrella_scan() function or perform any averaging etc. in your client code.
+ *
+ * Note that estrella will not allow another scan to be started on this session
+ * until results have been fetched using estrella_async_result().
+ *
+ * @param session       Session
+ *
+ * @return ESTROK       No errors occured
+ * @return ESTRINV      A supplied input argument is invalid
+ * @return ESTRNOTIMPL  Function has not been implemented for this device
+ * @return ESTRERR      Start of scan failed
+ */
+int estrella_async_scan(estrella_session_t *session);
+
+/** Query results for an asynchronously started scan
+ *
+ * This function fetches the results for a scan initiated by
+ * estrella_async_scan(). It will wait until either the device returns any data
+ * or it times out.
+ *
+ * @param session       Session
+ * @param buffer        Array of float, 2051 elements wide
+ *
+ * @return ESTROK       No errors occured
+ * @return ESTRINV      A supplied input argument is invalid
+ * @return ESTRTIMEOUT  Scan timed out (in normal operations mode)
+ * @return ESTRNOTIMPL  Operation has not been implemented for this device
+ * @return ESTRERR      Scan failed
+ */
+int estrella_async_result(estrella_session_t *session, float *buffer);
 
 /** Set data processing configuration
  *

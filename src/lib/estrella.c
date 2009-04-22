@@ -26,11 +26,11 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <string.h>
+
 #include "estrella.h"
 #include "estrella_usb.h"
 #include "estrella_private.h" 
-
-#include <string.h>
 
 /* ######################################################################### */
 /*                            TODO / Notes                                   */
@@ -152,9 +152,11 @@ int estrella_init(estrella_session_t *session, estrella_dev_t *dev)
     if (dev->devicetype == ESTRELLA_DEV_USB)
         rc = estrella_usb_init(session, dev);
     else
-        rc = ESTROK;
+        rc = ESTRNOTIMPL;
 
-    if (rc != ESTROK)
+    if (rc == ESTRNOTIMPL)
+        return rc;
+    else if (rc != ESTROK)
         return ESTRERR;
 
     /* These should be the default settings */
@@ -164,6 +166,7 @@ int estrella_init(estrella_session_t *session, estrella_dev_t *dev)
     session->xsmooth = ESTR_XSMOOTH_NONE;
     session->tempcomp = ESTR_TEMPCOMP_OFF;
     session->xtmode = ESTR_XTMODE_NORMAL;
+    estrella_unlock(&session->lock);
 
     return ESTROK;
 }
@@ -180,9 +183,11 @@ int estrella_close(estrella_session_t *session)
     if (session->dev.devicetype == ESTRELLA_DEV_USB)
         rc = estrella_usb_close(session);
     else 
-        rc = ESTROK;
+        rc = ESTRNOTIMPL;
 
-    if (rc != ESTROK)
+    if (rc == ESTRNOTIMPL)
+        return rc;
+    else if (rc != ESTROK)
         return ESTRERR;
 
     return ESTROK;
@@ -223,14 +228,73 @@ int estrella_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate)
     if (session->dev.devicetype == ESTRELLA_DEV_USB)
         rc = estrella_usb_rate(session, rate, xtrate);
     else
-        rc = ESTROK;
+        rc = ESTRNOTIMPL;
 
-    if (rc != ESTROK)
+    if (rc == ESTRNOTIMPL)
+        return rc;
+    else if (rc != ESTROK)
         return ESTRERR;
 
     /* Save the parameters */
     session->rate = rate;
     session->xtrate = xtrate;
+
+    return ESTROK;
+}
+
+int estrella_async_scan(estrella_session_t *session)
+{
+    int rc;
+
+    if (!session)
+        return ESTRINV;
+
+    /* If this session is locked another async scan is currently in progress */
+    if (estrella_islocked(&session->lock) == 1)
+        return ESTRERR;
+
+    if (session->dev.devicetype == ESTRELLA_DEV_USB)
+        rc = estrella_usb_scan_init(session);
+    else
+        rc = ESTRNOTIMPL;
+
+    if (rc == ESTRNOTIMPL)
+        return rc;
+    else if (rc != ESTROK)
+        return ESTRERR;
+
+    /* Lock this session until results have been fetched */
+    estrella_lock(&session->lock);
+
+    return ESTROK;
+}
+
+int estrella_async_result(estrella_session_t *session, float *buffer)
+{
+    int rc;
+
+    if (!session)
+        return ESTRINV;
+
+    if (!buffer)
+        return ESTRINV;
+
+    /* If this session is not locked no async scan has been started */
+    if (estrella_islocked(&session->lock) == 0)
+        return ESTRERR;
+
+    if (session->dev.devicetype == ESTRELLA_DEV_USB) {
+        rc = estrella_usb_scan_result(session, buffer);
+
+        /* No matter if success or error we need to unlock the session again */
+        estrella_unlock(&session->lock);
+    } else
+        rc = ESTRNOTIMPL;
+
+    if (rc == ESTRNOTIMPL)
+        return rc;
+    else if (rc != ESTROK)
+        return ESTRERR;
 
     return ESTROK;
 }
@@ -255,17 +319,19 @@ int estrella_scan(estrella_session_t *session, float *buffer)
         int j;
         float *mybuf;
 
-        /* We ususally write to buffer directly, tmbbuf is only use if we have
+        /* We ususally write to buffer directly, tmbbuf is only used if we have
          * to average across multiple scans */
         if (i == 0)
             mybuf = buffer;
         else
             mybuf = tmpbuf;
 
-        if (session->dev.devicetype == ESTRELLA_DEV_USB)
-            rc = estrella_usb_scan(session, mybuf);
-        else
-            rc = ESTROK;
+        if (session->dev.devicetype == ESTRELLA_DEV_USB) {
+            rc = estrella_usb_scan_init(session);
+            if (rc == ESTROK)
+                rc = estrella_usb_scan_result(session, mybuf);
+        } else
+            rc = ESTRNOTIMPL;
 
         /* Break on error */
         if (rc != ESTROK)
@@ -282,10 +348,17 @@ int estrella_scan(estrella_session_t *session, float *buffer)
             buffer[j] += mybuf[j];
     }
 
-    if (rc == ESTRTIMEOUT)
-        return rc;
-    else if (rc != ESTROK)
-        return ESTRERR;
+    switch(rc) {
+        case ESTRTIMEOUT:
+            return rc;
+        case ESTRNOTIMPL:
+            return rc;
+        case ESTROK:
+            break;
+        default:
+            return ESTRERR;
+            break;
+    }
 
     /* Now check if we need to average or not. This is not necessary if there
      * was only one scan to perform anyway. */

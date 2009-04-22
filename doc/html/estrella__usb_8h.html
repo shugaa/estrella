@@ -69,7 +69,9 @@ window.onload = initDynSections;
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#f88544e8b3377c894be5867fd5038b18">estrella_usb_rate</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, int rate, <a class="el" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a> xtrate)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#de1849dd67e63969048b014e48e9e614">estrella_usb_scan</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, float *buffer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#b822a2ed018b280d7dbd711e003648e0">estrella_usb_scan_init</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella__usb_8h.html#3e11d33170370f94a7d9ea0d7d02f8c4">estrella_usb_scan_result</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, float *buffer)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -221,12 +223,43 @@ ESTRERR Failed to set rate </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="de1849dd67e63969048b014e48e9e614"></a><!-- doxytag: member="estrella_usb.h::estrella_usb_scan" ref="de1849dd67e63969048b014e48e9e614" args="(estrella_session_t *session, float *buffer)" -->
+<a class="anchor" name="b822a2ed018b280d7dbd711e003648e0"></a><!-- doxytag: member="estrella_usb.h::estrella_usb_scan_init" ref="b822a2ed018b280d7dbd711e003648e0" args="(estrella_session_t *session)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int estrella_usb_scan           </td>
+          <td class="memname">int estrella_usb_scan_init           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
+          <td class="paramname"> <em>session</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Start scanning<p>
+Needs to be called before trying to acquire scan results using <a class="el" href="estrella__usb_8h.html#3e11d33170370f94a7d9ea0d7d02f8c4">estrella_usb_scan_result()</a><p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session</td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
+ESTRINV A supplied input argument is invalid <p>
+ESTRTIMEOUT Scan timed out <p>
+ESTRERR Scan failed </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="3e11d33170370f94a7d9ea0d7d02f8c4"></a><!-- doxytag: member="estrella_usb.h::estrella_usb_scan_result" ref="3e11d33170370f94a7d9ea0d7d02f8c4" args="(estrella_session_t *session, float *buffer)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int estrella_usb_scan_result           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
           <td class="paramname"> <em>session</em>, </td>
@@ -247,21 +280,21 @@ ESTRERR Failed to set rate </dd></dl>
 <div class="memdoc">
 
 <p>
-Perform a scan<p>
+Request results of a scan<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session to be used in this scan </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>buffer</em>&nbsp;</td><td>result buffer, array of float, 2051 elements wide</td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
-ESTRINV A supplie dinput argument is invalid <p>
+ESTRINV A supplied input argument is invalid <p>
 ESTRTIMEOUT Scan timed out <p>
 ESTRERR Scan failed </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 1 12:49:35 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 22 13:59:24 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

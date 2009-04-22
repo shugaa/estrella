@@ -125,17 +125,31 @@ int estrella_usb_close(estrella_session_t *session);
  */
 int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrate);
 
-/** Perform a scan
+/** Start scanning
+ * 
+ * Needs to be called before trying to acquire scan results using
+ * estrella_usb_scan_result() 
  *
- * @param session       Session to be used in this scan
- * @param buffer        result buffer, array of float, 2051 elements wide
+ * @param session       Session
  *
  * @return ESTROK       No errors occured
- * @return ESTRINV      A supplie dinput argument is invalid 
+ * @return ESTRINV      A supplied input argument is invalid 
  * @return ESTRTIMEOUT  Scan timed out
  * @return ESTRERR      Scan failed
  */
-int estrella_usb_scan(estrella_session_t *session, float *buffer);
+int estrella_usb_scan_init(estrella_session_t *session);
+
+/** Request results of a scan
+ *
+ * @param session       Session
+ * @param buffer        result buffer, array of float, 2051 elements wide
+ *
+ * @return ESTROK       No errors occured
+ * @return ESTRINV      A supplied input argument is invalid 
+ * @return ESTRTIMEOUT  Scan timed out
+ * @return ESTRERR      Scan failed
+ */
+int estrella_usb_scan_result(estrella_session_t *session, float *buffer);
 
 #endif /* _ESTRELLA_USB_H */
 

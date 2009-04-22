@@ -83,6 +83,16 @@ window.onload = initDynSections;
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="730b6f0ffd878fc1d04b08650ccf1734"></a><!-- doxytag: member="estrella.h::ESTRTIMEOUT" ref="730b6f0ffd878fc1d04b08650ccf1734" args="" -->
 #define&nbsp;</td><td class="memItemRight" valign="bottom"><b>ESTRTIMEOUT</b>&nbsp;&nbsp;&nbsp;(4)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8d6768da654f4db4dfcf2ef683ecfe83"></a><!-- doxytag: member="estrella.h::ESTRNOTIMPL" ref="8d6768da654f4db4dfcf2ef683ecfe83" args="" -->
+#define&nbsp;</td><td class="memItemRight" valign="bottom"><b>ESTRNOTIMPL</b>&nbsp;&nbsp;&nbsp;(5)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6954f5bd79e7a3fd93fee1bff524022f"></a><!-- doxytag: member="estrella.h::ESTRALREADY" ref="6954f5bd79e7a3fd93fee1bff524022f" args="" -->
+#define&nbsp;</td><td class="memItemRight" valign="bottom"><b>ESTRALREADY</b>&nbsp;&nbsp;&nbsp;(6)</td></tr>
+
+<tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6e8674ecc2f8d65b84aad80cf8867122"></a><!-- doxytag: member="estrella.h::estr_lock_t" ref="6e8674ecc2f8d65b84aad80cf8867122" args="" -->
+typedef int&nbsp;</td><td class="memItemRight" valign="bottom"><b>estr_lock_t</b></td></tr>
+
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a> { <br>
 &nbsp;&nbsp;<b>ESTR_XTMODE_NORMAL</b> =  (0), 
@@ -152,6 +162,10 @@ window.onload = initDynSections;
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#b59e11b58f809ce477bb57020a24c8bd">estrella_scan</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, float *buffer)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#5f827e606a226a6d42933358f056506d">estrella_async_scan</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#704d1ccd4b7d180227e4a9c9b3e67c03">estrella_async_result</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, float *buffer)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="estrella_8h.html#ca45e90b2f8a4af30b4e2c58e0aff809">estrella_update</a> (<a class="el" href="structestrella__session__t.html">estrella_session_t</a> *session, int scanstoavg, <a class="el" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a> xsmooth, <a class="el" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a> tempcomp)</td></tr>
 
 </table>
@@ -171,11 +185,11 @@ Public driver interface.
 <div class="memdoc">
 
 <p>
-Estrella operation modes <div class="fragment"><pre class="fragment"><a name="l00079"></a>00079              {
-<a name="l00080"></a>00080     ESTR_XTMODE_NORMAL    = (0),
-<a name="l00081"></a>00081     ESTR_XTMODE_TRIGGER,
-<a name="l00082"></a>00082     ESTR_XTMODE_TYPES,
-<a name="l00083"></a>00083 } <a class="code" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a>;
+Estrella operation modes <div class="fragment"><pre class="fragment"><a name="l00093"></a>00093              {
+<a name="l00094"></a>00094     ESTR_XTMODE_NORMAL    = (0),
+<a name="l00095"></a>00095     ESTR_XTMODE_TRIGGER,
+<a name="l00096"></a>00096     ESTR_XTMODE_TYPES,
+<a name="l00097"></a>00097 } <a class="code" href="estrella_8h.html#b43becb43529d23b80350b7ed4787e01">estr_xtmode_t</a>;
 </pre></div>
 <p>
 
@@ -193,14 +207,14 @@ Estrella operation modes <div class="fragment"><pre class="fragment"><a name="l0
 <div class="memdoc">
 
 <p>
-Estrella xsmoothing setting <div class="fragment"><pre class="fragment"><a name="l00086"></a>00086              {
-<a name="l00087"></a>00087     ESTR_XSMOOTH_NONE     = (0),
-<a name="l00088"></a>00088     ESTR_XSMOOTH_5PX,
-<a name="l00089"></a>00089     ESTR_XSMOOTH_9PX,
-<a name="l00090"></a>00090     ESTR_XSMOOTH_17PX,
-<a name="l00091"></a>00091     ESTR_XSMOOTH_33PX,
-<a name="l00092"></a>00092     ESTR_XSMOOTH_TYPES,
-<a name="l00093"></a>00093 } <a class="code" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a>;
+Estrella xsmoothing setting <div class="fragment"><pre class="fragment"><a name="l00100"></a>00100              {
+<a name="l00101"></a>00101     ESTR_XSMOOTH_NONE     = (0),
+<a name="l00102"></a>00102     ESTR_XSMOOTH_5PX,
+<a name="l00103"></a>00103     ESTR_XSMOOTH_9PX,
+<a name="l00104"></a>00104     ESTR_XSMOOTH_17PX,
+<a name="l00105"></a>00105     ESTR_XSMOOTH_33PX,
+<a name="l00106"></a>00106     ESTR_XSMOOTH_TYPES,
+<a name="l00107"></a>00107 } <a class="code" href="estrella_8h.html#10245e0bad33141b33feeadd78cb852f">estr_xsmooth_t</a>;
 </pre></div>
 <p>
 
@@ -218,11 +232,11 @@ Estrella xsmoothing setting <div class="fragment"><pre class="fragment"><a name=
 <div class="memdoc">
 
 <p>
-Estrella temperature compensation <div class="fragment"><pre class="fragment"><a name="l00096"></a>00096              {
-<a name="l00097"></a>00097     ESTR_TEMPCOMP_OFF     = (0),
-<a name="l00098"></a>00098     ESTR_TEMPCOMP_ON,
-<a name="l00099"></a>00099     ESTR_TEMPCOMP_TYPES,
-<a name="l00100"></a>00100 } <a class="code" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a>;
+Estrella temperature compensation <div class="fragment"><pre class="fragment"><a name="l00110"></a>00110              {
+<a name="l00111"></a>00111     ESTR_TEMPCOMP_OFF     = (0),
+<a name="l00112"></a>00112     ESTR_TEMPCOMP_ON,
+<a name="l00113"></a>00113     ESTR_TEMPCOMP_TYPES,
+<a name="l00114"></a>00114 } <a class="code" href="estrella_8h.html#08485e44c5331ad6039da979fd357909">estr_tempcomp_t</a>;
 </pre></div>
 <p>
 
@@ -240,12 +254,12 @@ Estrella temperature compensation <div class="fragment"><pre class="fragment"><a
 <div class="memdoc">
 
 <p>
-Xtiming resolution parameters <div class="fragment"><pre class="fragment"><a name="l00103"></a>00103              {
-<a name="l00104"></a>00104     ESTR_XRES_LOW         = (0),
-<a name="l00105"></a>00105     ESTR_XRES_MEDIUM,
-<a name="l00106"></a>00106     ESTR_XRES_HIGH,
-<a name="l00107"></a>00107     ESTR_XRES_TYPES,
-<a name="l00108"></a>00108 } <a class="code" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a>;
+Xtiming resolution parameters <div class="fragment"><pre class="fragment"><a name="l00117"></a>00117              {
+<a name="l00118"></a>00118     ESTR_XRES_LOW         = (0),
+<a name="l00119"></a>00119     ESTR_XRES_MEDIUM,
+<a name="l00120"></a>00120     ESTR_XRES_HIGH,
+<a name="l00121"></a>00121     ESTR_XRES_TYPES,
+<a name="l00122"></a>00122 } <a class="code" href="estrella_8h.html#d961eae1be381cfd9f87f556c9940b6f">estr_xtrate_t</a>;
 </pre></div>
 <p>
 
@@ -264,10 +278,10 @@ Xtiming resolution parameters <div class="fragment"><pre class="fragment"><a nam
 
 <p>
 Indicates the device type.<p>
-Spectrometers may be connected to the computer through USB or the parallel port. While at the moment this driver can only handle USB connected devices ist should be fairly easy to implement IEEE-1284 communications. Provided you know about the protocol being used. <div class="fragment"><pre class="fragment"><a name="l00116"></a>00116              {
-<a name="l00117"></a>00117     ESTRELLA_DEV_USB,
-<a name="l00118"></a>00118     ESTRELLA_DEV_LPT,
-<a name="l00119"></a>00119 } <a class="code" href="estrella_8h.html#81b17e2fedb6029889e010cf4155042a">estrella_devicetype_t</a>;
+Spectrometers may be connected to the computer through USB or the parallel port. While at the moment this driver can only handle USB connected devices ist should be fairly easy to implement IEEE-1284 communications. Provided ou know about the protocol being used. <div class="fragment"><pre class="fragment"><a name="l00130"></a>00130              {
+<a name="l00131"></a>00131     ESTRELLA_DEV_USB,
+<a name="l00132"></a>00132     ESTRELLA_DEV_LPT,
+<a name="l00133"></a>00133 } <a class="code" href="estrella_8h.html#81b17e2fedb6029889e010cf4155042a">estrella_devicetype_t</a>;
 </pre></div>
 <p>
 
@@ -410,7 +424,8 @@ Initialize a session on a device<p>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
 ESTRERR Could not create a session for this device <p>
-ESTRNOMEM Couldn't create session due to lack of memory </dd></dl>
+ESTRNOMEM Couldn't create session due to lack of memory <p>
+ESTRNOTIMPL Function has not been implemented for this device </dd></dl>
 
 </div>
 </div><p>
@@ -440,7 +455,8 @@ Be nice and destroy the session when we're done using it.<p>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
 ESTRINV The supplied session handle is invalid <p>
-ESTRERR Session could not be destroyed </dd></dl>
+ESTRERR Session could not be destroyed <p>
+ESTRNOTIMPL Function has not been implemented for this device </dd></dl>
 
 </div>
 </div><p>
@@ -486,7 +502,8 @@ Set integration time and timing resolution clock rate<p>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
 ESTRINV A supplied input argument is invalid <p>
-ESTRERR Could not set rate </dd></dl>
+ESTRERR Could not set rate <p>
+ESTRNOTIMPL Function has not been implemented for this device </dd></dl>
 
 </div>
 </div><p>
@@ -568,6 +585,82 @@ Acquire a spectral scan<p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
 ESTRINV A supplied input argument is invalid <p>
 ESTRTIMEOUT Scan timed out (in normal operations mode) <p>
+ESTRNOTIMPL Function has not been implemented for this device <p>
+ESTRERR Scan failed </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="5f827e606a226a6d42933358f056506d"></a><!-- doxytag: member="estrella.h::estrella_async_scan" ref="5f827e606a226a6d42933358f056506d" args="(estrella_session_t *session)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int estrella_async_scan           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
+          <td class="paramname"> <em>session</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Acquire a spectral scan asynchronously<p>
+<a class="el" href="estrella_8h.html#5f827e606a226a6d42933358f056506d">estrella_async_scan()</a> will just tell the spectrometer to start scanning but it won't wait for the results of the scan, thus not blocking the calling thread/process. Results can be fetched using <a class="el" href="estrella_8h.html#704d1ccd4b7d180227e4a9c9b3e67c03">estrella_async_result()</a>.<p>
+This function won't do any averaging over multiple scans obviously, neither does <a class="el" href="estrella_8h.html#704d1ccd4b7d180227e4a9c9b3e67c03">estrella_async_result()</a>. You will either have to use the compound <a class="el" href="estrella_8h.html#b59e11b58f809ce477bb57020a24c8bd">estrella_scan()</a> function or perform any averaging etc. in your client code.<p>
+Note that estrella will not allow another scan to be started on this session until results have been fetched using <a class="el" href="estrella_8h.html#704d1ccd4b7d180227e4a9c9b3e67c03">estrella_async_result()</a>.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session</td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
+ESTRINV A supplied input argument is invalid <p>
+ESTRNOTIMPL Function has not been implemented for this device <p>
+ESTRERR Start of scan failed </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="704d1ccd4b7d180227e4a9c9b3e67c03"></a><!-- doxytag: member="estrella.h::estrella_async_result" ref="704d1ccd4b7d180227e4a9c9b3e67c03" args="(estrella_session_t *session, float *buffer)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int estrella_async_result           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structestrella__session__t.html">estrella_session_t</a> *&nbsp;</td>
+          <td class="paramname"> <em>session</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&nbsp;</td>
+          <td class="paramname"> <em>buffer</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Query results for an asynchronously started scan<p>
+This function fetches the results for a scan initiated by <a class="el" href="estrella_8h.html#5f827e606a226a6d42933358f056506d">estrella_async_scan()</a>. It will wait until either the device returns any data or it times out.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>session</em>&nbsp;</td><td>Session </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>buffer</em>&nbsp;</td><td>Array of float, 2051 elements wide</td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>ESTROK No errors occured <p>
+ESTRINV A supplied input argument is invalid <p>
+ESTRTIMEOUT Scan timed out (in normal operations mode) <p>
+ESTRNOTIMPL Operation has not been implemented for this device <p>
 ESTRERR Scan failed </dd></dl>
 
 </div>
@@ -624,7 +717,7 @@ ESTRINV A supplied input argument is invalid </dd></dl>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 1 12:49:35 2009 for estrella by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 22 13:59:24 2009 for estrella by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

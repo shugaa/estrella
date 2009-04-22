@@ -434,17 +434,9 @@ int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrat
     return ESTROK;
 }
 
-int estrella_usb_scan(estrella_session_t *session, float *buffer)
+int estrella_usb_scan_init(estrella_session_t *session)
 {
     int rc;
-    unsigned char scanbuf[4096];
-    unsigned char progress[2];
-    unsigned char response;
-    int i;
-    estr_timestamp_t ts_start, ts_current;
-
-    /* Data is being read from this endpoint adress */
-    int endpoint_bulk_in = 0x88;
 
     /* Scan start request */
     estrella_usb_request_t usb_scan_req = {
@@ -454,19 +446,6 @@ int estrella_usb_scan(estrella_session_t *session, float *buffer)
         0x0000,
         0,
         NULL,
-    };
-
-    /* Scan progress request. The windows driver sends this multiple times,
-     * usually the device answers with [0xb3,0x00]. In case we receive
-     * [0xb3,0x01] we need to initiate a bulk transfer to get the data from the
-     * device. */
-    estrella_usb_request_t usb_progress_req = {
-        0x00,
-        0xb3,
-        0x0000,
-        0x0000,
-        sizeof(progress),
-        progress,
     };
 
     if (session->spec.usb_dev_handle == NULL)
@@ -484,6 +463,35 @@ int estrella_usb_scan(estrella_session_t *session, float *buffer)
             5000);
     if (rc < 0)
         return ESTRERR;
+
+    return ESTROK;
+}
+
+
+int estrella_usb_scan_result(estrella_session_t *session, float *buffer)
+{
+    int rc;
+    int i;
+    unsigned char response;
+    unsigned char progress[2];
+    unsigned char scanbuf[4096];
+    estr_timestamp_t ts_start, ts_current;
+
+    /* Data is being read from this endpoint adress */
+    int endpoint_bulk_in = 0x88;
+
+    /* Scan progress request. The windows driver sends this multiple times,
+     * usually the device answers with [0xb3,0x00]. In case we receive
+     * [0xb3,0x01] we need to initiate a bulk transfer to get the data from the
+     * device. */
+    estrella_usb_request_t usb_progress_req = {
+        0x00,
+        0xb3,
+        0x0000,
+        0x0000,
+        sizeof(progress),
+        progress,
+    };
 
     /* Time at beginning of scan */
     rc = estrella_timestamp_get(&ts_start);
