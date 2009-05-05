@@ -146,6 +146,8 @@ int estrella_init(estrella_session_t *session, estrella_dev_t *dev)
     if (!dev)
         return ESTRINV;
 
+    memset(session, 0, sizeof(estrella_session_t));
+
     memcpy(&(session->dev), dev, sizeof(estrella_dev_t));
 
     /* Initialize device and session here */

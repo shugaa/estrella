@@ -587,8 +587,10 @@ int estrella_usb_scan_result(estrella_session_t *session, float *buffer)
 int estrella_usb_close(estrella_session_t *session)
 {
     /* Releasing the interface probably isn't necessary but it won't hurt either */
-    usb_release_interface(session->spec.usb_dev_handle, 0x00);
-    usb_close(session->spec.usb_dev_handle);
+    if (session->spec.usb_dev_handle) {
+        usb_release_interface(session->spec.usb_dev_handle, 0x00);
+        usb_close(session->spec.usb_dev_handle);
+    }
 
     return ESTROK;
 }
