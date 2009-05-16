@@ -26,11 +26,11 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <string.h>
+
 #include "estrella.h"
 #include "estrella_private.h"
 #include "estrella_usb.h"
-
-#include <string.h>
 
 /* ######################################################################### */
 /*                            TODO / Notes                                   */
@@ -98,7 +98,7 @@ int prv_usb_device_info(struct usb_device *dev, estrella_dev_t *device)
         return ESTRERR;
     }
 
-    /* Set product and vendor id */
+    /* Set product- and vendor id */
     device->spec.usb.vendorid = (unsigned short)buf[11];
     device->spec.usb.vendorid = device->spec.usb.vendorid << 8;
     device->spec.usb.vendorid |= (unsigned short)buf[10];
@@ -119,7 +119,7 @@ int prv_usb_device_info(struct usb_device *dev, estrella_dev_t *device)
         return ESTRERR;
     }
 
-    /* We don't get a serial number usually so a failure here is not lethal */
+    /* We don't get a serial number, so a failure here is not lethal */
     rc = usb_get_string_simple(usb_handle, (int)buf[16], device->spec.usb.serialnumber, sizeof(device->spec.usb.serialnumber));
     if (rc < 0) {
         strncpy(device->spec.usb.serialnumber, "?", sizeof(device->spec.usb.serialnumber));
@@ -136,7 +136,7 @@ int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle)
     struct usb_device *dev;
     struct usb_dev_handle *usb_handle = NULL;
 
-    /* update bus and device information */
+    /* Update bus and device information */
     usb_find_busses();
     usb_find_devices();
 
@@ -413,7 +413,9 @@ int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrat
      * This is pretty much all I could figure out from the sniffed logs. There
      * must be more to it though, since the rate seems to be adjusted, too when
      * you select xtrate 1 or 2. I just can't seem to find out what's going on
-     * there. */
+     * there. Actually the rate adjustment is very much linear with a slope of
+     * about 0.7 for medium and 0.6 for high resolution. Don't now if we should
+     * follow suit on this one. It does not really seem necessary anyway. */
     if (xtrate == ESTR_XRES_MEDIUM)
         estrella_rate_req_data[2] = 0x08;
     else if (xtrate == ESTR_XRES_HIGH) 

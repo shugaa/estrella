@@ -124,9 +124,8 @@ typedef enum {
 /** Indicates the device type.
  *
  * Spectrometers may be connected to the computer through USB or the parallel
- * port. While at the moment this driver can only handle USB connected devices
- * ist should be fairly easy to implement IEEE-1284 communications. Provided ou
- * know about the protocol being used. */
+ * port. While at the moment this driver can only handle USB connected devices,
+ * it should be fairly easy to implement IEEE-1284 EPP mode communications */
 typedef enum {
     ESTRELLA_DEV_USB,
     ESTRELLA_DEV_LPT,
