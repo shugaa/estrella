@@ -56,11 +56,11 @@ struct usb_ident {
 /*                           Private interface (Module)                      */
 /* ######################################################################### */
 
-int prv_usb_preup(void);
-int prv_usb_upload_firmware(struct usb_device *dev);
-int prv_usb_find_devices(dll_list_t *devices);
-int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle);
-int prv_usb_device_info(struct usb_device *dev, estrella_dev_t *device);
+static int prv_usb_preup(void);
+static int prv_usb_upload_firmware(struct usb_device *dev);
+static int prv_usb_find_devices(dll_list_t *devices);
+static int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle);
+static int prv_usb_device_info(struct usb_device *dev, estrella_dev_t *device);
 
 /* ######################################################################### */
 /*                           Implementation                                  */
