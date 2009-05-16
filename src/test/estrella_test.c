@@ -35,7 +35,39 @@
 #define ESTRELLA_TEST_TIMING
 
 /* Uncomment if you dont want to have the scan result printed */
-#define ESTRELLA_TEST_RESULT
+//#define ESTRELLA_TEST_RESULT
+
+int timestamp_diffus(struct timespec *ts1, struct timespec *ts2, unsigned long *diff)
+{
+    unsigned long us_passed = 0;
+    unsigned long stv1_adds = 0;
+    unsigned long stv1_nssub = 0;
+    struct timespec *stv1, *stv2;
+
+    stv1 = ts1;
+    stv2 = ts2;
+
+    if (stv1->tv_sec > stv2->tv_sec) {
+        stv1 = ts2;
+        stv2 = ts1;
+    } 
+
+    if (stv2->tv_sec != stv1->tv_sec) {
+        us_passed += ((1000*1000*1000)-stv1->tv_nsec)/1000;
+        stv1_adds = 1;
+        stv1_nssub = stv1->tv_nsec;
+    } else if (stv1->tv_nsec > stv2->tv_nsec) {
+        stv1 = ts2;
+        stv2 = ts1; 
+    }
+
+    us_passed += (stv2->tv_sec - (stv1->tv_sec+stv1_adds))*1000*1000;
+    us_passed += (stv2->tv_nsec - (stv1->tv_nsec-stv1_nssub))/1000;
+
+    *diff = us_passed; 
+
+    return ESTROK;
+}
 
 int main(int argc, char *argv[]) 
 {
@@ -48,7 +80,10 @@ int main(int argc, char *argv[])
     float buffer[2051];
 
 #ifdef ESTRELLA_TEST_TIMING
-    struct timespec tp1, tp2;
+    struct timespec tp_start1, tp_start2, tp_res1, tp_res2;
+    unsigned long usec_start;
+    unsigned long usec_res;
+    unsigned long diff;
 #endif
 
     dll_init();
@@ -91,7 +126,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    rc = estrella_rate(&esession, 15, ESTR_XRES_LOW);
+    rc = estrella_rate(&esession, 50, ESTR_XRES_HIGH);
     if (rc != 0) {
         printf("Unable to set rate\n");
         estrella_close(&esession);
@@ -99,19 +134,39 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    usec_start = 0;
+    usec_res = 0;
+    for(i=0;i<1000;i++) {
+
+        printf("i: %d\n", i);
+
 #ifdef ESTRELLA_TEST_TIMING
-    clock_gettime(CLOCK_MONOTONIC, &tp1);
+        clock_gettime(CLOCK_MONOTONIC, &tp_start1);
 #endif
 
-    for(i=0;i<1;i++) {
-        rc = estrella_scan(&esession, buffer);
+        rc = estrella_async_scan(&esession);
         if (rc != ESTROK)
             break;
-    }
 
 #ifdef ESTRELLA_TEST_TIMING
-    clock_gettime(CLOCK_MONOTONIC, &tp2);
+        clock_gettime(CLOCK_MONOTONIC, &tp_start2);
+        clock_gettime(CLOCK_MONOTONIC, &tp_res1);
 #endif
+
+        rc = estrella_async_result(&esession, buffer);
+        if (rc != ESTROK)
+            break;
+
+#ifdef ESTRELLA_TEST_TIMING
+        clock_gettime(CLOCK_MONOTONIC, &tp_res2);
+        timestamp_diffus(&tp_start1, &tp_start2, &diff);
+        usec_start += diff;
+        timestamp_diffus(&tp_res1, &tp_res2, &diff);
+        usec_res += diff;
+        printf("usec_res: %lu\n", usec_res);
+#endif
+
+    }
 
     if (rc != ESTROK) {
         printf("Unable to scan\n");
@@ -121,9 +176,7 @@ int main(int argc, char *argv[])
     }
 
 #ifdef ESTRELLA_TEST_TIMING
-    tp2.tv_sec -= tp1.tv_sec;
-    tp2.tv_nsec -= tp1.tv_nsec;
-    printf("Scanning took %ds, %dus\n", (unsigned int)tp2.tv_sec, (unsigned int)(tp2.tv_nsec/(1000)));
+    printf("tart scan took %luus, getting results took %luus\n", usec_start/1000, usec_res/(1000));
 #endif
 
 #ifdef ESTRELLA_TEST_RESULT
