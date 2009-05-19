@@ -1,0 +1,1 @@
+fxload -D /proc/bus/usb/006/3 -I /home/bjoern/estrella/firmware/usb2epp_firmware.hex -t fx2
