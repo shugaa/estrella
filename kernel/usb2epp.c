@@ -48,7 +48,7 @@ struct usb_usb2epp {
         struct usb_device       *udev;                  /* the usb device for this device */
         struct usb_interface    *interface;             /* the interface for this device */
         unsigned char           *bulk_in_buffer;        /* the buffer to receive data */
-        unsigned char           *result_buffer;         /* result buffer */
+        float                   *result_buffer;         /* result buffer */
         size_t                  bulk_in_size;           /* the size of the receive buffer */
         int                     errors;                 /* the last request tanked */
         int                     open_count;             /* count the number of openers */
@@ -476,7 +476,7 @@ static int usb2epp_probe(struct usb_interface *interface, const struct usb_devic
                 err("Could not allocate bulk_in_buffer");
                 goto error;
         }
-        dev->result_buffer = kmalloc(2051*sizeof(float), GFP_KERNEL);
+        dev->result_buffer = (float*)kmalloc(2051*sizeof(float), GFP_KERNEL);
         if (!dev->result_buffer) {
                 err("Could not allocate bulk_in_buffer");
                 goto error;

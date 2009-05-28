@@ -29,6 +29,8 @@ int main (int argc, char *argv[])
                 return 1;
         }
 
+        //printf("got %d bytes form driver: %d\n", rc);
+
         for (i = 0;i<2051;i++)
                 printf("buffer[%d]: %f\n", i, buffer[i]);
 
