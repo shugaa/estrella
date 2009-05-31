@@ -7,6 +7,25 @@
  *      modify it under the terms of the GNU General Public License as
  *      published by the Free Software Foundation, version 2.
  *
+ * This code is loosely based on Greg Kroah-Hartman's USB skeleton sample
+ * driver.
+ *
+ * You will need to have the appropriate firmware loaded in order to use the
+ * device.
+ *
+ * There is no averaging, smoothing or temperature compensation performed by
+ * this driver yet. The user space 'estrella' implementation offers a few more
+ * features at that point.
+ *
+ * The device is configured through a hand full of ioctl commands. Those are
+ * quite self explanatory, have a look at the usb2epp_ioctl() function for
+ * details.
+ *
+ * Measurement results are read directly from the device node in devfs. this
+ * should return the usual 2051*sizeof(float) number of bytes for a single
+ * measurement. Non-blocking I/O is supported as well, in which case you will
+ * get -EBUSY for scans in progress.
+ *
  */
 
 #include "usb2epp.h"
@@ -26,10 +45,14 @@
 #define USB2EPP_MINOR_BASE              (224)     
 #endif
 
+/* Request and endpoint types */
 #define USB2EPP_REQ_SETUP               (0xb4)
 #define USB2EPP_REQ_STATUS              (0xb3)
 #define USB2EPP_REQ_SCAN                (0xb2)
 #define USB2EPP_BULK_IN_ENDPOINT        (0x88)
+
+/* This is how many bytes we get from the device for a single scan */
+#define USB2EPP_BULK_IN_SIZE            (4096)
 
 #define to_usb2epp_dev(d) container_of(d, struct usb_usb2epp, kref)
 
@@ -47,14 +70,13 @@ struct usb_usb2epp {
          */
         struct usb_device       *udev;                  /* the usb device for this device */
         struct usb_interface    *interface;             /* the interface for this device */
-        unsigned char           *bulk_in_buffer;        /* the buffer to receive data */
+        unsigned char           *bulk_in_buffer;        /* BULK_IN_SIZE bytes for the measurement results */
         float                   *result_buffer;         /* result buffer */
         size_t                  bulk_in_size;           /* the size of the receive buffer */
         int                     errors;                 /* the last request tanked */
         int                     open_count;             /* count the number of openers */
-        spinlock_t              err_lock;               /* lock for errors */
         struct kref             kref;                   /* object reference counter */
-        struct mutex            io_mutex;               /* synchronize I/O with disconnect */
+        struct mutex            io_mutex;               /* synchronize I/O */
 
         /*
          * Session data
@@ -270,6 +292,7 @@ static long usb2epp_ioctl(struct file *file, unsigned int cmd, unsigned long arg
         }
 
 exit:
+        /* Return our I/O lock and return */
         mutex_unlock(&dev->io_mutex);
         return rc;
 }
@@ -306,10 +329,8 @@ static int usb2epp_flush(struct file *file, fl_owner_t id)
         mutex_lock(&dev->io_mutex);
 
         /* read out errors, leave subsequent opens a clean slate */
-        spin_lock_irq(&dev->err_lock);
         res = dev->errors ? (dev->errors == -EPIPE ? -EPIPE : -EIO) : 0;
         dev->errors = 0;
-        spin_unlock_irq(&dev->err_lock);
 
         mutex_unlock(&dev->io_mutex);
 
@@ -321,14 +342,14 @@ static ssize_t usb2epp_read(struct file *file, char *buffer, size_t count, loff_
         int rc;
         struct usb_usb2epp *dev;
         int bytes_read, bytes_total;
-        unsigned char rawdata[4096];
         int i;
 
         /* Get our session and lock I/O */
         dev = (struct usb_usb2epp*)file->private_data;
         mutex_lock(&dev->io_mutex);
 
-        if (!dev->interface) {          /* disconnect() was called */
+        /* disconnect() was called */
+        if (!dev->interface) { 
                 rc = -ENODEV;
                 goto exit;
         }
@@ -348,9 +369,11 @@ static ssize_t usb2epp_read(struct file *file, char *buffer, size_t count, loff_
                 dev->state = USB2EPP_STATE_SCANNING;
         }
 
-        /* Check for completion of the scan */
+        /* Check for completion of the scan. If we're in blocking I/O mode we busy loop here. This
+         * might not be a very good idea. */
         rc = 0;
         for(;;) {
+                /* Exit the loop if complete */
                 rc = usb2epp_scan_iscomplete(dev);
                 if (rc == 0)
                         break;
@@ -360,29 +383,28 @@ static ssize_t usb2epp_read(struct file *file, char *buffer, size_t count, loff_
                         rc = -EBUSY; 
                         break;
                 }
-
-                continue;
         }
 
         /* Scan is not complete */
         if (rc != 0)
                 goto exit;
 
+        /* We'll now try to get USB2EPP_BULK_IN_SIZE bytes from the device */
         bytes_total = 0;
         do {
                 /* do a blocking bulk read to get data from the device */
                 rc = usb_bulk_msg(dev->udev,
                                 usb_rcvbulkpipe(dev->udev, USB2EPP_BULK_IN_ENDPOINT),
-                                dev->bulk_in_buffer,
-                                min(dev->bulk_in_size, count),
+                                (void*)&dev->bulk_in_buffer[bytes_total],
+                                min(dev->bulk_in_size, (size_t)USB2EPP_BULK_IN_SIZE),
                                 &bytes_read, 5000);
                 if (rc < 0)
                         break;
 
-                memcpy(&rawdata[bytes_total], dev->bulk_in_buffer, bytes_read);
                 bytes_total += bytes_read;
-        } while (bytes_total < 4096); 
+        } while (bytes_total < USB2EPP_BULK_IN_SIZE); 
 
+        /* usb_bulk_msg() screwed up */
         if (rc < 0)
                 goto exit;
 
@@ -391,31 +413,33 @@ static ssize_t usb2epp_read(struct file *file, char *buffer, size_t count, loff_
 
         /* Fill the buffer and send back */
         for (i=2; i<4096;i+=2) {
-                unsigned short val = 0;
-                val |= rawdata[i+1];
+                unsigned int val = 0;
+                val |= dev->bulk_in_buffer[i+1];
                 val = (val << 8);
-                val |= rawdata[i];
+                val |= dev->bulk_in_buffer[i];
 
                 dev->result_buffer[(i-2)/2] = (float)val;
         }
         for (i=2047;i<2051;i++)
                 dev->result_buffer[i] = 0.0;
 
-        /* if the read was successful, copy the data to userspace */
+        /* Copy the data to userspace */
         rc = copy_to_user(buffer, (const void *)dev->result_buffer, 2051*sizeof(float));
 
+        /* return either an error code or the number ob bytes copied */
         if (rc != 0)
                 rc = -EFAULT;
         else
                 rc = 2051*sizeof(float);
 exit:
+        /* Release out I/O lock and return */
         mutex_unlock(&dev->io_mutex);
         return rc;
 }
 
 static ssize_t usb2epp_write(struct file *file, const char *user_buffer, size_t count, loff_t *ppos)
 {
-        /* There's no data to be tranferred _to_ the device really */
+        /* There's no data to be transferred _to_ the device really */
         return 0;
 }
 
@@ -424,7 +448,6 @@ static int usb2epp_probe(struct usb_interface *interface, const struct usb_devic
         struct usb_usb2epp *dev = NULL;
         struct usb_host_interface *iface_desc = NULL;
         struct usb_endpoint_descriptor *endpoint = NULL;
-        size_t buffer_size;
         int i;
         int rc = -ENOMEM;
 
@@ -435,10 +458,9 @@ static int usb2epp_probe(struct usb_interface *interface, const struct usb_devic
                 goto error;
         }
 
-        /* Init the reference counter, locks and usb anchor */
+        /* Init the reference counter and I/O lock */
         kref_init(&dev->kref);
         mutex_init(&dev->io_mutex);
-        spin_lock_init(&dev->err_lock);
 
         /* Attach this driver to the device */
         dev->udev = usb_get_dev(interface_to_usbdev(interface));
@@ -464,14 +486,14 @@ static int usb2epp_probe(struct usb_interface *interface, const struct usb_devic
         if (i == iface_desc->desc.bNumEndpoints)
                 goto error;
                 
-        /* Allocate transfer buffer */
-        buffer_size = le16_to_cpu(endpoint->wMaxPacketSize);
-        dev->bulk_in_size = buffer_size;
+        /* Remember the maximum bulk packet size */
+        dev->bulk_in_size = le16_to_cpu(endpoint->wMaxPacketSize);
 
         dev->bulk_in_buffer = NULL;
         dev->result_buffer = NULL;
         
-        dev->bulk_in_buffer = kmalloc(buffer_size, GFP_KERNEL);
+        /* Allocate buffers for raw result data and the return values */
+        dev->bulk_in_buffer = kmalloc(USB2EPP_BULK_IN_SIZE, GFP_KERNEL);
         if (!dev->bulk_in_buffer) {
                 err("Could not allocate bulk_in_buffer");
                 goto error;
@@ -502,12 +524,13 @@ static int usb2epp_probe(struct usb_interface *interface, const struct usb_devic
         dev->tempcomp = USB2EPP_TEMPCOMP_OFF;
         dev->xtmode = USB2EPP_XTMODE_NORMAL;
 
+        /* We're idle initially */
         dev->state = USB2EPP_STATE_IDLE; 
 
-        /* TODO: Eventually configure the device here */
+        /* TODO: Eventually configure the device here initially */
 
         /* let the user know what node this device is now attached to */
-        info("USB2EPP device now attached to usb2epp-%d", interface->minor);
+        info("USB2EPP device now attached to usb2epp%d", interface->minor);
 
         /* Return success */
         return 0;
@@ -524,6 +547,7 @@ static void usb2epp_disconnect(struct usb_interface *interface)
         struct usb_usb2epp *dev;
         int minor = interface->minor;
 
+        /* Save our session before the interface is destroyed */
         dev = usb_get_intfdata(interface);
         usb_set_intfdata(interface, NULL);
 
@@ -543,11 +567,6 @@ static void usb2epp_disconnect(struct usb_interface *interface)
 
 static int usb2epp_suspend(struct usb_interface *intf, pm_message_t message)
 {
-        struct usb_usb2epp *dev = usb_get_intfdata(intf);
-
-        if (!dev)
-                return 0;
-
         return 0;
 }
 
@@ -571,6 +590,10 @@ static int usb2epp_post_reset(struct usb_interface *intf)
 
         /* we are sure no URBs are active - no locking needed */
         dev->errors = -EPIPE;
+
+        /* Back to idle state after reset */
+        dev->state = USB2EPP_STATE_IDLE;
+
         mutex_unlock(&dev->io_mutex);
 
         return 0;
