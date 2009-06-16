@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
                 break;
         }
     }
-    dll_iterator_free(&it);
 
     dll_clear(&devices);
 
