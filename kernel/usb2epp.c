@@ -71,7 +71,7 @@ struct usb_usb2epp {
         struct usb_device       *udev;                  /* the usb device for this device */
         struct usb_interface    *interface;             /* the interface for this device */
         unsigned char           *bulk_in_buffer;        /* BULK_IN_SIZE bytes for the measurement results */
-        float                   *result_buffer;         /* result buffer */
+        int                     *result_buffer;         /* result buffer */
         size_t                  bulk_in_size;           /* the size of the receive buffer */
         int                     errors;                 /* the last request tanked */
         int                     open_count;             /* count the number of openers */
@@ -418,19 +418,19 @@ static ssize_t usb2epp_read(struct file *file, char *buffer, size_t count, loff_
                 val = (val << 8);
                 val |= dev->bulk_in_buffer[i];
 
-                dev->result_buffer[(i-2)/2] = (float)val;
+                dev->result_buffer[(i-2)/2] = (int)val;
         }
         for (i=2047;i<2051;i++)
                 dev->result_buffer[i] = 0.0;
 
         /* Copy the data to userspace */
-        rc = copy_to_user(buffer, (const void *)dev->result_buffer, 2051*sizeof(float));
+        rc = copy_to_user(buffer, (const void *)dev->result_buffer, 2051*sizeof(int));
 
         /* return either an error code or the number ob bytes copied */
         if (rc != 0)
                 rc = -EFAULT;
         else
-                rc = 2051*sizeof(float);
+                rc = 2051*sizeof(int);
 exit:
         /* Release our I/O lock and return */
         mutex_unlock(&dev->io_mutex);
@@ -498,7 +498,7 @@ static int usb2epp_probe(struct usb_interface *interface, const struct usb_devic
                 err("Could not allocate bulk_in_buffer");
                 goto error;
         }
-        dev->result_buffer = (float*)kmalloc(2051*sizeof(float), GFP_KERNEL);
+        dev->result_buffer = (int*)kmalloc(2051*sizeof(int), GFP_KERNEL);
         if (!dev->result_buffer) {
                 err("Could not allocate bulk_in_buffer");
                 goto error;

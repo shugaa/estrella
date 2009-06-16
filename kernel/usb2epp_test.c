@@ -14,7 +14,7 @@ int main (int argc, char *argv[])
         int i;
         int usbfd;
         size_t len;
-        float buffer[2051];
+        int buffer[2051];
         char buf[256];
         gpif_session_t session;
 
@@ -79,7 +79,7 @@ int main (int argc, char *argv[])
 #endif
 
 
-        rc = read(usbfd, buffer, 2051*sizeof(float));
+        rc = read(usbfd, buffer, 2051*sizeof(int));
         if (rc < 0) {
                 perror("read");
                 close(usbfd);
@@ -114,9 +114,9 @@ int main (int argc, char *argv[])
 
         for (i=0;i<2051;i++) {
                 if (i < 2050)
-                        len = snprintf(buf, sizeof(buf), "%f %f\n", (float)i, buffer[i]);
+                        len = snprintf(buf, sizeof(buf), "%d %d\n", i, buffer[i]);
                 else
-                        len = snprintf(buf, sizeof(buf), "%f %f\ne\n", (float)i, buffer[i]);
+                        len = snprintf(buf, sizeof(buf), "%d %d\ne\n", i, buffer[i]);
 
                 rc = gpif_write(&session, (const char*)buf, &len);
                 if(rc != EGPIFOK) {
