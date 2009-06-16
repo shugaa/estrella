@@ -432,7 +432,7 @@ static ssize_t usb2epp_read(struct file *file, char *buffer, size_t count, loff_
         else
                 rc = 2051*sizeof(float);
 exit:
-        /* Release out I/O lock and return */
+        /* Release our I/O lock and return */
         mutex_unlock(&dev->io_mutex);
         return rc;
 }

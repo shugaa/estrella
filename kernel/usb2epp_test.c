@@ -4,6 +4,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <gpif.h>
+#include <unistd.h>
+
+#define SHOWCASE
 
 int main (int argc, char *argv[])
 {
@@ -40,6 +43,42 @@ int main (int argc, char *argv[])
                 return 1;
         }
 
+        /* This is for the thesis presentation only, trigger the data generator once to
+         * get a readout */
+#ifdef SHOWCASE
+        {
+                int iowfd;
+                unsigned char buf[] = {
+                        0xff,
+                        0x00,
+                        0x00,
+                        0x00,
+                };
+
+                if((iowfd = open( "/dev/usb/iowarrior0", O_RDWR)) < 0 ) {
+                        perror( "iowarrior io-pins open failed" );
+                        return 1;
+                }
+
+                /* Pull high */
+                rc = write(iowfd, buf, 4);
+                if (rc<4) {
+                        perror("write");
+                        return 1;
+                }
+
+                /* Pull low */
+                buf[0] = 0x00;
+                buf[3] = 0xff;
+                rc = write(iowfd, buf, 4);
+                if (rc<4) {
+                        perror("write");
+                        return 1;
+                }
+        }    
+#endif
+
+
         rc = read(usbfd, buffer, 2051*sizeof(float));
         if (rc < 0) {
                 perror("read");
@@ -65,8 +104,7 @@ int main (int argc, char *argv[])
                 return 1;
         }
 
-        snprintf(buf, sizeof(buf), "plot '-' using 1:($2) '%%lf %%lf' smooth csplines notitle axes x1y1 with lines linecolor rgb '#00FF00' linewidth 2\n");
-        len = strlen(buf);
+        len = snprintf(buf, sizeof(buf), "plot '-' using 1:($2) '%%lf %%lf' smooth csplines notitle axes x1y1 with lines linecolor rgb '#FF0000' linewidth 2\n");
         rc = gpif_write(&session, (const char*)buf, &len);
         if(rc != EGPIFOK) {
                 printf("Failed to create new plot\n");

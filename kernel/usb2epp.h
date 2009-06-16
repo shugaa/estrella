@@ -55,7 +55,7 @@ typedef enum {
  
 /* Xtiming resolution parameters */
 typedef enum {
-        USB2EPP_XTRATE_LOW = (0),
+        USB2EPP_XTRATE_LOW      = (0),
         USB2EPP_XTRATE_MEDIUM,
         USB2EPP_XTRATE_HIGH,
         USB2EPP_XTRATE_TYPES,
