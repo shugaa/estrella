@@ -4,6 +4,10 @@ This driver is implemented as a userspace library on top of libusb. It has been
 written with Linux as a target OS in mind but porting to any libusb supported
 platform should be easy. If it takes any effort at all.
 
+A native Linux kernel driver implementation is also available by now but it does
+not offer all the nifty features present in the estrella user space
+implementation (e.g. averaging accross multiple scans).
+
 Estrella can only handle USB devices at the moment but should be easily
 extensible to drive IEEE-1284 connected equipment.
 
