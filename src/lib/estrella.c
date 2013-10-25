@@ -71,7 +71,7 @@ int estrella_num_devices(int *num)
     if (!num)
         return ESTRINV;
 
-    rc = dll_new(&devices);
+    rc = dll_init(&devices);
     if (rc != EDLLOK)
         return ESTRERR;
 
@@ -103,7 +103,7 @@ int estrella_get_device(estrella_dev_t *dev, int num)
     if (!dev)
         return ESTRINV;
 
-    rc = dll_new(&devices);
+    rc = dll_init(&devices);
     if (rc != EDLLOK)
         return ESTRERR;
 
@@ -124,7 +124,7 @@ int estrella_get_device(estrella_dev_t *dev, int num)
         return ESTRINV;
     }
 
-    rc = dll_get(&devices, (void**)&devtmp, num);
+    rc = dll_get(&devices, (void**)&devtmp, NULL, num);
     if (rc != EDLLOK) {
         dll_clear(&devices);
         return ESTRERR;

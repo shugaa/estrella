@@ -86,8 +86,7 @@ int main(int argc, char *argv[])
     unsigned long diff;
 #endif
 
-    dll_init();
-    dll_new(&devices);
+    dll_init(&devices);
 
     rc = estrella_find_devices(&devices);
     if (rc != 0) {

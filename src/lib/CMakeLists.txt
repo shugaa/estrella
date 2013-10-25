@@ -29,7 +29,9 @@ set(libSrcs
     estrella_usb.c
     estrella_usb_preup.c
     estrella_private.c)
- 
+
+include_directories(${CMAKE_INCLUDE_PATH})
+link_directories(${CMAKE_LIBRARY_PATH})
 add_library(estrella SHARED ${libSrcs})
 
 target_link_libraries(estrella

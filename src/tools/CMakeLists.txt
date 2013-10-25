@@ -25,6 +25,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 include_directories(${CMAKE_SOURCE_DIR}/lib)
+include_directories(${CMAKE_INCLUDE_PATH})
+link_directories(${CMAKE_LIBRARY_PATH})
 
 set(finddevSrcs 
     estrella_find_devices.c)

@@ -39,8 +39,7 @@ int main(int argc, char *argv[])
     void *device = NULL;
     unsigned int numdevices = 0;
 
-    dll_init();
-    dll_new(&devices);
+    dll_init(&devices);
 
     rc = estrella_find_devices(&devices);
     if (rc != 0) {
@@ -55,8 +54,8 @@ int main(int argc, char *argv[])
     }
 
     i = 0;
-    dll_iterator_new(&it, &devices);
-    while (dll_iterator_next(&it, (void**)&device) == EDLLOK) {
+    dll_iterator_init(&it, &devices);
+    while (dll_iterator_next(&it, (void**)&device, NULL) == EDLLOK) {
         estrella_dev_t *dev = (estrella_dev_t*)device;
 
         printf("DEVICE %d\n", i);
