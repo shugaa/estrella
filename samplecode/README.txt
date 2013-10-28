@@ -22,7 +22,11 @@ gcc -o estrplot
     -lestrella
     estr_plot.c
 
-run the resulting estrplot binary and hope for the best;)
+Adapt the include and library paths to your specific installation. This should
+only be necessary if you installed the dependencies to a non-standard location.
+Otherwise the respective options can be omitted. 
+
+Run the resulting estrplot binary and hope for the best;)
 
 You probably want to slightly edit the source and modify the defines for rate,
 resolution and calibration factors (C1, C2, C3) at the very top of the file to
