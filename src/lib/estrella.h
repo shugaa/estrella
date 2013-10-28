@@ -93,7 +93,7 @@ typedef int estr_lock_t;
 typedef enum {
     ESTR_XTMODE_NORMAL    = (0),
     ESTR_XTMODE_TRIGGER,
-    ESTR_XTMODE_TYPES,
+    ESTR_XTMODE_TYPES
 } estr_xtmode_t;
 
 /** Estrella xsmoothing setting */
@@ -103,14 +103,14 @@ typedef enum {
     ESTR_XSMOOTH_9PX,
     ESTR_XSMOOTH_17PX,
     ESTR_XSMOOTH_33PX,
-    ESTR_XSMOOTH_TYPES,
+    ESTR_XSMOOTH_TYPES
 } estr_xsmooth_t;
 
 /** Estrella temperature compensation */
 typedef enum {
     ESTR_TEMPCOMP_OFF     = (0),
     ESTR_TEMPCOMP_ON,
-    ESTR_TEMPCOMP_TYPES,
+    ESTR_TEMPCOMP_TYPES
 } estr_tempcomp_t;
 
 /** Xtiming resolution parameters */
@@ -118,7 +118,7 @@ typedef enum {
     ESTR_XRES_LOW         = (0),
     ESTR_XRES_MEDIUM,
     ESTR_XRES_HIGH,
-    ESTR_XRES_TYPES,
+    ESTR_XRES_TYPES
 } estr_xtrate_t;
 
 /** Indicates the device type.
@@ -128,7 +128,7 @@ typedef enum {
  * it should be fairly easy to implement IEEE-1284 EPP mode communications */
 typedef enum {
     ESTRELLA_DEV_USB,
-    ESTRELLA_DEV_LPT,
+    ESTRELLA_DEV_LPT
 } estrella_devicetype_t;
 
 /** USB device information. */

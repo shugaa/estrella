@@ -62,6 +62,11 @@ static int prv_usb_find_devices(dll_list_t *devices);
 static int prv_usb_get_handle(estrella_dev_t *device, struct usb_dev_handle **handle);
 static int prv_usb_device_info(struct usb_device *dev, estrella_dev_t *device);
 
+static unsigned char estrella_init_req_data[] = {0x00,0x12,0x10,0x1f,0xe0,0x40};
+static unsigned char estrella_rate_req_data_reset[] = {0x00,0x00,0x04,0x20,0xe0,0x40};
+static unsigned char estrella_rate_req_data[] = {0x00,0x00,0x04,0x20,0xe0,0x40};
+static unsigned char progress[2];
+
 /* ######################################################################### */
 /*                           Implementation                                  */
 /* ######################################################################### */
@@ -323,7 +328,6 @@ int estrella_usb_init(estrella_session_t *session, estrella_dev_t *device)
     struct usb_dev_handle *handle;
 
     /* Data for the initializing control message */
-    unsigned char estrella_init_req_data[] = {0x00,0x12,0x10,0x1f,0xe0,0x40}; 
     estrella_usb_request_t usb_init_req = {
         0x00,
         0xb4,
@@ -388,7 +392,6 @@ int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrat
      * value is >= 5 then data[3] is decremented by 1 to 0x1f. Also we obviously 
      * can't supply values <= 1 (on _my_ device, it's supposed to work on
      * others). So, 2 ms integration time is the minimum. */
-    unsigned char estrella_rate_req_data[] = {0x00,0x00,0x04,0x20,0xe0,0x40}; 
     estrella_usb_request_t usb_rate_req = {
         0x00,
         0xb4,
@@ -403,6 +406,7 @@ int estrella_usb_rate(estrella_session_t *session, int rate, estr_xtrate_t xtrat
 
     /* For whatever reason we have to subtract 1 from estrella_init_req_data[3]
      * in case we want to use integration times >= 5 ms. */
+    memcpy(estrella_rate_req_data, estrella_rate_req_data_reset, sizeof(estrella_rate_req_data));
     estrella_rate_req_data[1] = (unsigned char)(rate & 0xFF);
     estrella_rate_req_data[0] = (unsigned char)((rate >> 8) & 0xFF);
 
@@ -475,7 +479,6 @@ int estrella_usb_scan_result(estrella_session_t *session, float *buffer)
     int rc;
     int i;
     unsigned char response;
-    unsigned char progress[2];
     unsigned char scanbuf[4096];
     estr_timestamp_t ts_start, ts_current;
 

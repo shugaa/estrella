@@ -33,6 +33,14 @@ endif(COMMAND cmake_policy)
 
 project(estrella)
 
+IF(NOT CMAKE_BUILD_TYPE )
+   SET(CMAKE_BUILD_TYPE "Release" )
+ENDIF()
+
+SET(CMAKE_C_FLAGS "-O2 -pedantic -Wall")
+SET(CMAKE_C_FLAGS_DEBUG "-g")
+SET(CMAKE_C_FLAGS_RELEASE "")
+
 find_path(dll_list_h dll_list.h)
 find_library(dll_so NAMES dll libdll)
 

@@ -35,7 +35,7 @@
 #define ESTRELLA_TEST_TIMING
 
 /* Uncomment if you dont want to have the scan result printed */
-//#define ESTRELLA_TEST_RESULT
+/*#define ESTRELLA_TEST_RESULT*/
 
 int timestamp_diffus(struct timespec *ts1, struct timespec *ts2, unsigned long *diff)
 {
