@@ -30,13 +30,13 @@ set(libSrcs
     estrella_usb_preup.c
     estrella_private.c)
 
-include_directories(${CMAKE_INCLUDE_PATH})
-link_directories(${CMAKE_LIBRARY_PATH})
+include_directories(${dll_list_h})
+
 add_library(estrella SHARED ${libSrcs})
 
 target_link_libraries(estrella
-    dll
-    usb)
+    usb
+    ${dll_so})
 
 install(TARGETS estrella 
     DESTINATION lib)

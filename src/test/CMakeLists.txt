@@ -24,17 +24,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#find_path(gpif_h gpif.h)
+#find_library(gpif_so NAMES gpif libgpif)
+
+include_directories(${dll_list_h})
+#include_directories(${gpif_h})
 include_directories(${CMAKE_SOURCE_DIR}/lib)
 
 set(testSrcs 
     estrella_test.c)
 
 add_executable(estrella_test ${testSrcs})
- 
+
 target_link_libraries(estrella_test
     estrella
-    dll
     rt
+    ${dll_so}
+    #${gpif_so}
 )
 
 install(TARGETS estrella_test DESTINATION bin)

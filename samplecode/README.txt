@@ -10,7 +10,17 @@ http://github.com/bjoernr/libgpif) installed as well as Gnuplot
 
 Then simply compile the program like this:
 
-gcc -o estrplot -lgpif -ldll -lestrella estr_plot.c
+gcc -o estrplot 
+    -I/opt/libgpif/include/gpif 
+    -I/opt/libdll/include/dll 
+    -I/opt/estrella/include 
+    -L/opt/libdll/lib 
+    -L/opt/libgpif/lib 
+    -L/opt/estrella/lib
+    -lgpif 
+    -ldll 
+    -lestrella
+    estr_plot.c
 
 run the resulting estrplot binary and hope for the best;)
 

@@ -28,6 +28,7 @@
 
 #include <sys/types.h>
 #include <stdio.h>
+#include <string.h>
 #include <gpif.h>
 #include <dll_list.h>
 #include <estrella.h>
@@ -61,8 +62,7 @@ int estr_plot(void)
         };
 
         /* Create a device list for estrella */
-        dll_init();
-        dll_new(&devices);
+        dll_init(&devices);
 
         /* Try to setup an estrella session */
         rc = estrella_find_devices(&devices);
@@ -79,7 +79,7 @@ int estr_plot(void)
                 return 1;
         }
 
-        rc = dll_get(&devices, &device, 0);
+        rc = dll_get(&devices, &device, NULL, 0);
         if (rc != EDLLOK) {
                 printf("Cannot access estrella device 0\n");
                 dll_clear(&devices);
@@ -166,7 +166,7 @@ int estr_plot(void)
         }
 
         /* Prepare for plotting */
-        snprintf(buf, sizeof(buf), "plot '-' using 1:($2) '%%lf %%lf' smooth csplines notitle axes x1y1 with lines linecolor rgb '#FF0000' linewidth 2\n");
+        snprintf(buf, sizeof(buf), "plot '-' smooth csplines notitle axes x1y1 with lines linecolor rgb '#FF0000' linewidth 2\n");
         len = strlen(buf);
         rc = gpif_write(&session, (const char*)buf, &len);
         if(rc != EGPIFOK) {

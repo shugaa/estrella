@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     }
 
     /* get the first of the found devices. */
-    rc = dll_get(&devices, &device, 0);
+    rc = dll_get(&devices, &device, NULL, 0);
     if (rc != EDLLOK) {
         dll_clear(&devices);
         return 1;
