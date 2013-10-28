@@ -24,6 +24,17 @@ Here's some instructions on how to build and install estrella.
 
         -DESTRELLA_WITH_TESTS:BOOL=TRUE
 
+    If the necessary libraries are installed in a non-standard location, you
+    can tell CMake by using the CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH
+    variables like so:
+
+        -DCMAKE_INCLUDE_PATH:PATH=/opt/libdll/include/dll
+        -DCMAKE_LIBRARY_PATH:PATH=/opt/libdll/lib
+
+    Specify multiple paths like this if necessary:
+
+        -DCMAKE_INCLUDE_PATH:PATH="/opt/libdll/include/dll;/path/to/my/lib"
+
     I would suggest building out of tree, so make yourself a build directory
     somewhere:
 
