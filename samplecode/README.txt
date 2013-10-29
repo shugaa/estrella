@@ -10,7 +10,7 @@ http://github.com/bjoernr/libgpif) installed as well as Gnuplot
 
 Then simply compile the program like this:
 
-gcc -o estrplot 
+gcc estr_plot.c -o estrplot 
     -I/opt/libgpif/include/gpif 
     -I/opt/libdll/include/dll 
     -I/opt/estrella/include 
@@ -20,7 +20,6 @@ gcc -o estrplot
     -lgpif 
     -ldll 
     -lestrella
-    estr_plot.c
 
 Adapt the include and library paths to your specific installation. This should
 only be necessary if you installed the dependencies to a non-standard location.
