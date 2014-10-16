@@ -32,6 +32,7 @@
 # 
 
 from estrella_classes import *
+from ctypes import byref, c_float
 import matplotlib.pyplot as plt
 import numpy
 
