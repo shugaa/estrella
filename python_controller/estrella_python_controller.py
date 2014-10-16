@@ -113,6 +113,11 @@ def estrella_controller():
 	
 	# do the scan
 	rc = estrella.estrella_scan(byref(esession), byref(data))
+	if (rc != 0):
+		print 'The scan failed.','\n'
+		estrella.estrella_close(byref(esession))
+		dll.dll_clear(byref(devices))
+		return 1
 	
 	# convert the scan result into a Numpy array
 	counts = numpy.frombuffer(data, numpy.float32)
