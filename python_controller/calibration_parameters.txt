@@ -1,0 +1,7 @@
+# Insert here the calibration parameters C1, C2, and C3 that come together with your spectrometer (usually in the back).
+# Be aware that this file have 'space' as separator, so do not change the spaces in this file.
+#
+Calibration Parameters
+C1: 0.1882250
+C2: 0.0000190
+C3: 396.5274880
