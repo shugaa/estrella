@@ -33,8 +33,8 @@
 
 from estrella_classes import *
 from ctypes import byref, c_float
-import matplotlib.pyplot as plt
 from os import getcwd
+import matplotlib.pyplot as plt
 
 def estrella_controller():
 	
