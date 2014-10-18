@@ -32,12 +32,25 @@
 # 
 
 from ctypes import cdll
+from numpy import empty, frombuffer, float32
+from pandas import read_csv
 
-#####################################################
-# Function to import estrella libraries into python #
-#####################################################
+##################################################
+# Functions for the controller to work properly  #
+##################################################
 
 def import_libraries(local_dll, local_estrella):
 	libdll = cdll.LoadLibrary(local_dll)
 	libestrella = cdll.LoadLibrary(local_estrella)
 	return libdll, libestrella
+
+def create_xaxis(parameters_location):
+	xaxis = empty(2051)
+	calibration = read_csv(parameters_location,sep=' ',skiprows=3)
+	for i in range(2051):
+		xaxis[i] = (calibration.Parameters[1]/4.0)*(float(i*i)) + (calibration.Parameters[0]/2.0)*(float(i)) + calibration.Parameters[2]
+	return xaxis
+
+def create_yaxis(data):
+	yaxis = frombuffer(data, float32)
+	return yaxis
