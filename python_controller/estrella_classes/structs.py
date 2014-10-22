@@ -57,8 +57,8 @@ dll_item._fields_=[("data",c_void_p),
 
 class dll_list_t(Structure):
 	_fields_= [("count",c_uint),
-               ("first",POINTER(POINTER(dll_item))),
-               ("last",POINTER(POINTER(dll_item)))]
+                   ("first",POINTER(POINTER(dll_item))),
+                   ("last",POINTER(POINTER(dll_item)))]
 
 ##################################################
 # Structs for ESTRELLA in Classes (python shape) #
