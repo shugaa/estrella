@@ -50,15 +50,15 @@ estr_lock_t = c_int
 
 class dll_item(Structure):
 	pass
-dll_item._fields_=[	("data",c_void_p),
-					("prev",POINTER(POINTER(dll_item))),
-					("next",POINTER(POINTER(dll_item))),
-					("datasize",c_size_t)]
+dll_item._fields_=[("data",c_void_p),
+                   ("prev",POINTER(POINTER(dll_item))),
+                   ("next",POINTER(POINTER(dll_item))),
+                   ("datasize",c_size_t)]
 
 class dll_list_t(Structure):
-	_fields_= [	("count",c_uint),
-				("first",POINTER(POINTER(dll_item))),
-				("last",POINTER(POINTER(dll_item)))]
+	_fields_= [("count",c_uint),
+               ("first",POINTER(POINTER(dll_item))),
+               ("last",POINTER(POINTER(dll_item)))]
 
 ##################################################
 # Structs for ESTRELLA in Classes (python shape) #
@@ -66,13 +66,13 @@ class dll_list_t(Structure):
 
 class estrella_usbdev_t(Structure):
 	pass
-estrella_usbdev_t._fields_ = [	('bus', c_char * 256),
-								('devnum', c_ubyte),
-								('vendorid', c_ushort),
-								('productid', c_ushort),
-								('manufacturer', c_char * 128),
-								('product', c_char * 128),
-								('serialnumber', c_char * 32),]
+estrella_usbdev_t._fields_ = [('bus', c_char * 256),
+                              ('devnum', c_ubyte),
+                              ('vendorid', c_ushort),
+                              ('productid', c_ushort),
+                              ('manufacturer', c_char * 128),
+                              ('product', c_char * 128),
+                              ('serialnumber', c_char * 32),]
 
 class estrella_dev_t_u(Union):
 	pass
@@ -80,8 +80,8 @@ estrella_dev_t_u._fields_ = [('usb', estrella_usbdev_t)]
 
 class estrella_dev_t(Structure):
 	pass
-estrella_dev_t._fields_ = [	('devicetype', estrella_devicetype_t),
-							('spec', estrella_dev_t_u)]
+estrella_dev_t._fields_ = [('devicetype', estrella_devicetype_t),
+                           ('spec', estrella_dev_t_u)]
 
 class usb_dev_handle(Structure):
 	pass
@@ -93,24 +93,24 @@ estrella_session_t_u._fields_ = [('usb_dev_handle', POINTER(usb_dev_handle))]
 
 class estrella_session_t(Structure):
 	pass
-estrella_session_t._fields_ = [	('rate', c_int),
-								('scanstoavg', c_int),
-								('xtmode', estr_xtmode_t),
-								('xtrate', estr_xtrate_t),
-								('xsmooth', estr_xsmooth_t),
-								('tempcomp', estr_tempcomp_t),
-								('dev', estrella_dev_t),
-								('spec', estrella_session_t_u),
-								('lock', estr_lock_t)]
+estrella_session_t._fields_ = [('rate', c_int),
+                               ('scanstoavg', c_int),
+                               ('xtmode', estr_xtmode_t),
+                               ('xtrate', estr_xtrate_t),
+                               ('xsmooth', estr_xsmooth_t),
+                               ('tempcomp', estr_tempcomp_t),
+                               ('dev', estrella_dev_t),
+                               ('spec', estrella_session_t_u),
+                               ('lock', estr_lock_t)]
 
 ###################################################
 # Structs for ESTRELLA USB Classes (python shape) #
 ###################################################
 
 class estrella_usb_request_t(Structure):
-	_fields_= [	("requesttype",c_uint),
-				("request",c_uint),
-				("value",c_uint),
-				("index",c_uint),
-				("size",c_uint),
-				("data",c_char_p)]
+	_fields_= [("requesttype",c_uint),
+               ("request",c_uint),
+               ("value",c_uint),
+               ("index",c_uint),
+               ("size",c_uint),
+               ("data",c_char_p)]
