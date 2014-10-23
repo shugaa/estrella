@@ -32,100 +32,48 @@
 # 
 
 from estrella_classes import *
-from ctypes import byref, c_float
+from sys import exit
+from os import getcwd
 import matplotlib.pyplot as plt
-import numpy
 
 def estrella_controller():
 	
 	print '\n','Initializing Estrella Python Driver','\n'
 	
+	# saves the root of the program
+	root = getcwd()
+	
 	# import main libraries to control the spectrometer (change the location to match yours)
 	dll, estrella = import_libraries('/opt/libdll/lib/libdll.so','/opt/estrella/lib/libestrella.so')
 	
-	# define values for C1, C2 and C3
-	C1 = 0.1882250
-	C2 = 0.0000190
-	C3 = 396.5274880
+	# create x-axis (must pass the location of file with calibration parameters, change if needed)
+	wavelength = create_xaxis(root + '/calibration_parameters.txt')
 	
-	# create x-axis
-	wavelength = numpy.empty(2051)
-	for i in range(2051):
-		wavelength[i] = (C2/4.0)*(float(i*i)) + (C1/2.0)*(float(i)) + C3
+	# create the device list and the estrella session
+	try:
+		devices, esession = estrella_begin(dll, estrella)
+	except TypeError:
+		print 'Error detected, exiting.','\n'
+		exit(1)
 	
-	# create a device list for the libraries
-	device = c_void_p(None)
-	numdevices = c_uint(0)
-	devices = dll_list_t()
-	dll.dll_init(byref(devices))
+	# setup estrella session
+	setup = estrella_setup(esession, devices, dll, estrella, ESTR_XSMOOTH_NONE, ESTR_XTMODE_NORMAL, ESTR_TEMPCOMP_OFF, ESTRELLA_RATE, ESTR_XRES_HIGH)
+	if setup != 0:
+		print 'Error detected, exiting.','\n'
+		exit(1)
 	
-	# create a session for Estrella
-	esession = estrella_session_t()
-	
-	# try to set up an estrella session
-	rc = estrella.estrella_find_devices(byref(devices))
-	if rc != 0:
-		print 'It was not possible to look for USB devices.\n(Are you root?)','\n'
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	rc = dll.dll_count(byref(devices), byref(numdevices))
-	if ((rc != 1) or (numdevices == 0)):
-		print 'No device found.','\n'
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	rc = dll.dll_get(byref(devices), byref(device), None, c_int(0))
-	if (rc != 1):
-		print 'It was not possible to acess the EPP2000 device.','\n'
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	rc = estrella.estrella_init(byref(esession), device)
-	if (rc != 0):
-		print 'It was not possible to create the session.','\n'
-		estrella.estrella_close(byref(esession))
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	rc = estrella.estrella_update(byref(esession), c_int(1), ESTR_XSMOOTH_NONE, ESTR_TEMPCOMP_OFF)
-	if (rc != 0):
-		print 'It was not possible to configure the data.','\n'
-		estrella.estrella_close(byref(esession))
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	rc = estrella.estrella_rate(byref(esession), ESTRELLA_RATE, ESTR_XRES_HIGH);
-	if (rc != 0):
-		print 'It was not possible to configure the rates.','\n'
-		estrella.estrella_close(byref(esession))
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	rc = estrella.estrella_mode(byref(esession), ESTR_XTMODE_NORMAL)
-	if (rc != 0):
-		print 'It was not possible to configure operation mode.','\n'
-		estrella.estrella_close(byref(esession))
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	# create a C like float array
-	data = (c_float * 2051)()
-	
-	# do the scan
-	rc = estrella.estrella_scan(byref(esession), byref(data))
-	if (rc != 0):
-		print 'The scan failed.','\n'
-		estrella.estrella_close(byref(esession))
-		dll.dll_clear(byref(devices))
-		return 1
-	
-	# convert the scan result into a Numpy array
-	counts = numpy.frombuffer(data, numpy.float32)
+	# do the normal scan
+	counts = estrella_nscan(devices, esession, dll, estrella)
+	if counts == 1:
+		print 'Error detected, exiting.','\n'
+		exit(1)
 	
 	# plot the result using Matplotlib
 	plt.plot(wavelength,counts)
 	plt.show()
+	
+	# close the session
+	estrella_end(devices, esession, dll, estrella)
 	
 	print '\n','All done without errors.','\n'
 	
